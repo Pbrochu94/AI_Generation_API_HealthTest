@@ -3,6 +3,8 @@ package utils
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import com.github.tomakehurst.wiremock.WireMockServer
 import java.util.Date
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+
 
 object projectAPIData{
     val projectId:String = "123j9jk093803j3-22"
@@ -10,8 +12,9 @@ object projectAPIData{
     val name:String = "Project"
 }
 
-object mockServer {
+object MockServer {
     private val server: WireMockServer = WireMockServer(8089)
+    val baseUrl: String = "http://localhost:8089"
     fun start(){
         server.start()
         configureFor("localhost", 8089)
@@ -20,9 +23,18 @@ object mockServer {
             .willReturn(aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
-                .withBody("")
+                .withBody("""
+                    {
+                    "projectId": ${projectAPIData.projectId},
+                    "createdAt": ${projectAPIData.createdAt},
+                    "name": ${projectAPIData.name},
+                    },
+                """.trimIndent())
             )
 
         )
+    }
+    fun stop(){
+        server.stop()
     }
 }

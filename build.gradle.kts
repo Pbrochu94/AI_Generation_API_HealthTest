@@ -14,6 +14,8 @@ dependencies {
     testImplementation("org.junit.platform:junit-platform-suite:1.10.0")
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     testImplementation("com.github.tomakehurst:wiremock-jre8:2.35.0")
+    testImplementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.0")
+    testImplementation("io.rest-assured:rest-assured:5.3.0")
 }
 
 tasks.test {
