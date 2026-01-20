@@ -7,7 +7,7 @@ import utils.MockServer
 import utils.MockServer.baseUrl
 import utils.MockServer.start
 import utils.MockServer.stop
-import utils.projectAPIData
+
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ProjectApi {
@@ -22,9 +22,13 @@ class ProjectApi {
         .`when`()
         .post("/projects")
         .then()
-        .statusCode(200)
+        .statusCode(201)
         .extract()
             .body().asString()
         println(response)
+    }
+    @Test
+    fun `Get an existing project returns details`(){
+
     }
 }
