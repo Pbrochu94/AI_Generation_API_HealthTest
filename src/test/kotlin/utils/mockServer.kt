@@ -33,12 +33,13 @@ object MockServer {
     fun start(){
         server.start()
         configureFor("localhost", 8089)
-        //simulate endpoints
+        //login VALID
         validUsers.forEach { user ->
             server.stubFor(post("/login")
                 .withRequestBody(matchingJsonPath("$.mail",  equalTo(user["mail"])))
                 .withRequestBody(matchingJsonPath("$.password",  equalTo(user["password"])))
                 .willReturn(aResponse()
+                    .withStatus(201)
                     .withHeader("Content-Type", "application/json")
                     .withBody("""
                    {
@@ -47,32 +48,34 @@ object MockServer {
                    }
                """.trimIndent())))
         }
+        //login INVALID
         server.stubFor(post("/login")
             .withRequestBody(matchingJsonPath("$.mail"))
             .withRequestBody(matchingJsonPath("$.password"))
             .atPriority(10)
             .willReturn(aResponse()
+                .withStatus(401)
                 .withHeader("Content-Type", "application/json")
                 .withBody("""
                    {
                        "error": "Invalid credentials"
                    }
                """.trimIndent())))
-
+        //project CREATION
         server.stubFor(post("/projects")
             .willReturn(aResponse()
                 .withStatus(201)
                 .withHeader("Content-Type", "application/json")
                 .withBody("""
                     {
-                    "projectId": ${validProjectIds.random()},
-                    "createdAt": ${createdAt},
-                    "name": ${projectName.random()},
+                    "projectId": "${validProjectIds.random()}",
+                    "createdAt": "${createdAt}",
+                    "name": "${projectName.random()}",
                     },
                 """.trimIndent())
             )
         )
-        // Stub for valid IDs
+        //get projects with VALID IDs
         validProjectIds.forEach { id ->
             server.stubFor(
                 get("/projects/$id")
@@ -91,7 +94,7 @@ object MockServer {
             )
         }
 
-        // Generic stub for invalid IDs
+        //get projects with INVALID IDs
         server.stubFor(
             get(urlPathMatching("/projects/.*"))
                 .atPriority(10) // priorité plus basse
