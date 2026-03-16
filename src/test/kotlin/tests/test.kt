@@ -10,7 +10,7 @@ import utils.RequestBuilder
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ProjectApi {
     @BeforeAll
-    fun startServer(){
+    fun initServer(){
         MockServer.start()
     }
     @Test
@@ -41,5 +41,9 @@ class ProjectApi {
         .extract()
         .response()
         println(response.body().jsonPath().getString(""))
+    }
+    @AfterAll
+    fun destroyServer(){
+        MockServer.stop()
     }
 }

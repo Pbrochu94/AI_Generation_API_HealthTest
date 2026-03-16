@@ -8,6 +8,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 
 
 object MockServer {
+    private var online = false
     private val server: WireMockServer = WireMockServer(8089)
     val baseUrl: String = "http://localhost:8089"
     val validProjectIds:List<String> = listOf("123j9jk093803j3-22","123gdhnjetehetsl-45", "dsadasfasfsdasda-55","fdhdfgsdgsdffsdf231-22")
@@ -31,7 +32,10 @@ object MockServer {
     )
     val projectName:List<String> = listOf("Project Abyss","Project Reach", "Project Eclipse", "Project Dragon", "Project Dream", "Project Seireitei")
     fun start(){
-        server.start()
+        if(!online){
+            server.start()
+            online = true
+        }
         configureFor("localhost", 8089)
         //login VALID
         validUsers.forEach { user ->
