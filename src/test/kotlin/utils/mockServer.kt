@@ -82,6 +82,7 @@ object MockServer {
         ),
     )
     val projectName:List<String> = listOf("Project Abyss","Project Reach", "Project Eclipse", "Project Dragon", "Project Dream", "Project Seireitei")
+    var projects: MutableList<Map<String,String>> = mutableListOf()
     fun start(){
         if(!online){
             server.start()
@@ -148,7 +149,6 @@ object MockServer {
                     )
             )
         }
-
         //get projects with INVALID IDs
         server.stubFor(
             get(urlPathMatching("/projects/.*"))
