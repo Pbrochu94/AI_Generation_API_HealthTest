@@ -126,7 +126,7 @@ object MockServer {
                    }
                """.trimIndent())))
         //project CREATION
-        server.stubFor(post("/projects")
+        server.stubFor(post("/project")
             .willReturn(aResponse()
                 .withStatus(201)
                 .withHeader("Content-Type", "application/json")
@@ -134,6 +134,8 @@ object MockServer {
                     {
                     "projectId": "${validProjectIds.random()}",
                     "createdAt": "${createdAt}",
+                    "name": "{{jsonPath request.body '$.name'}}",
+                    "privacy": "{{jsonPath request.body '$.privacy'}}"
                     },
                 """.trimIndent())
             )

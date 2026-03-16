@@ -1,8 +1,11 @@
 package tests
 
+import com.github.tomakehurst.wiremock.http.Response.response
 import io.restassured.RestAssured
 import org.junit.jupiter.api.*
 import utils.MockServer
+import utils.Privacy
+import utils.Project
 import utils.RequestBuilder
 
 
@@ -14,15 +17,17 @@ class ProjectApi {
     }
     @Test
     fun `project creation` (){
-        val projectInfo = mapOf<String,String>(
-            "name" to "Seireitei"
-        )
+        val newProject = Project(inputName = "Abyss", Privacy.PRIVATE)
         val response = RestAssured.given()
             .baseUri(MockServer.baseUrl)
-        .`when`()
-            .body(projectInfo)
-        .post("/projects")
-        .then()
+            .log().body()
+            .`when`()
+            .body(mapOf("name" to newProject.getName(),
+                "privacy" to newProject.getPrivacy())
+            )
+            .post("/project")
+            .then()
+            .log().body()
         .statusCode(201)
         .extract()
             .response()
