@@ -18,6 +18,8 @@ class ProjectApi {
 
     }
     @Test
+    fun `Login with invalid mail and valid password returns 401`(){}
+    @Test
     fun `project creation` (){
         val response = RestAssured.given()
             .baseUri(MockServer.baseUrl)

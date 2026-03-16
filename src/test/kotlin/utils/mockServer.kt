@@ -44,7 +44,7 @@ object MockServer {
                     .withBody("""
                    {
                        "accountId": "01",
-                       "accountName": "Account Name",
+                       "accountName": "${user["username"]}",
                    }
                """.trimIndent())))
         }
