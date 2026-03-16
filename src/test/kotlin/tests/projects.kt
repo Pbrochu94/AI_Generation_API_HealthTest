@@ -14,9 +14,13 @@ class ProjectApi {
     }
     @Test
     fun `project creation` (){
+        val projectInfo = mapOf<String,String>(
+            "name" to "Seireitei"
+        )
         val response = RestAssured.given()
             .baseUri(MockServer.baseUrl)
         .`when`()
+            .body(projectInfo)
         .post("/projects")
         .then()
         .statusCode(201)

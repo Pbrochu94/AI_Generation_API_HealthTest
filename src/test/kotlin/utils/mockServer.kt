@@ -4,12 +4,17 @@ import com.github.tomakehurst.wiremock.client.WireMock.*
 import com.github.tomakehurst.wiremock.WireMockServer
 import java.util.Date
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 
 
 
 object MockServer {
     private var online = false
-    private val server: WireMockServer = WireMockServer(8089)
+    private val server = WireMockServer(
+        wireMockConfig()
+            .port(8089)
+            .globalTemplating(true)
+    )
     val baseUrl: String = "http://localhost:8089"
     val validProjectIds:List<String> = listOf("123j9jk093803j3-22","123gdhnjetehetsl-45", "dsadasfasfsdasda-55","fdhdfgsdgsdffsdf231-22")
     val createdAt:Date = Date()
@@ -83,6 +88,9 @@ object MockServer {
     )
     val projectName:List<String> = listOf("Project Abyss","Project Reach", "Project Eclipse", "Project Dragon", "Project Dream", "Project Seireitei")
     var projects: MutableList<Map<String,String>> = mutableListOf()
+    fun projectCreation(){
+
+    }
     fun start(){
         if(!online){
             server.start()
@@ -126,7 +134,6 @@ object MockServer {
                     {
                     "projectId": "${validProjectIds.random()}",
                     "createdAt": "${createdAt}",
-                    "name": "${projectName.random()}",
                     },
                 """.trimIndent())
             )
