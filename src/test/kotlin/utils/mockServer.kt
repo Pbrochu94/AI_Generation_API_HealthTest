@@ -30,6 +30,57 @@ object MockServer {
             "password" to "Berserker01",
         ),
     )
+    val usersWithInvalidMail:List<Map<String,String>> = listOf(
+        mapOf(
+            "mail" to "Invalid@gmail.com",
+            "username" to "Artorias",
+            "password" to "abyssWalker01",
+        ),
+        mapOf(
+            "mail" to "NotValid@gmail.com",
+            "username" to "Master chief",
+            "password" to "Spartan117",
+        ),
+        mapOf(
+            "mail" to "Outdated.com",
+            "username" to "Guts",
+            "password" to "Berserker01",
+        ),
+    )
+    val usersWithInvalidPassword:List<Map<String,String>> = listOf(
+        mapOf(
+            "mail" to "Artorias@gmail.com",
+            "username" to "Artorias",
+            "password" to "badpassword",
+        ),
+        mapOf(
+            "mail" to "masterchief@gmail.com",
+            "username" to "Master chief",
+            "password" to "incorrectpassword",
+        ),
+        mapOf(
+            "mail" to "Guts@gmail.com",
+            "username" to "Guts",
+            "password" to "outdatedPassword",
+        ),
+    )
+    val usersWithInvalidCredentials:List<Map<String,String>> = listOf(
+        mapOf(
+            "mail" to "NotValid@gmail.com",
+            "username" to "Artorias",
+            "password" to "badpassword",
+        ),
+        mapOf(
+            "mail" to "Invalid@gmail.com",
+            "username" to "Master chief",
+            "password" to "incorrectpassword",
+        ),
+        mapOf(
+            "mail" to "Bad@gmail.com",
+            "username" to "Guts",
+            "password" to "outdatedPassword",
+        ),
+    )
     val projectName:List<String> = listOf("Project Abyss","Project Reach", "Project Eclipse", "Project Dragon", "Project Dream", "Project Seireitei")
     fun start(){
         if(!online){

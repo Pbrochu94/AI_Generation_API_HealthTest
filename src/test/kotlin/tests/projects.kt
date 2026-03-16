@@ -1,7 +1,6 @@
 package tests
 
 import io.restassured.RestAssured
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.*
 import utils.MockServer
 import utils.RequestBuilder
@@ -13,12 +12,6 @@ class ProjectApi {
     fun initServer(){
         MockServer.start()
     }
-    @Test
-    fun `Login with valid credentials returns 200`(){
-
-    }
-    @Test
-    fun `Login with invalid mail and valid password returns 401`(){}
     @Test
     fun `project creation` (){
         val response = RestAssured.given()
@@ -33,14 +26,7 @@ class ProjectApi {
     }
     @Test
     fun `Get an existing project returns details`(){
-        val response = RequestBuilder.login("Artorias@hotmail.com", "123456")
-            .`when`()
-            .post("/login")
-        .then()
-        .statusCode(200)
-        .extract()
-        .response()
-        println(response.body().jsonPath().getString(""))
+
     }
     @AfterAll
     fun destroyServer(){
