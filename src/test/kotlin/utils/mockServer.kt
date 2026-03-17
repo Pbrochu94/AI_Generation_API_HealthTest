@@ -5,7 +5,7 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import java.util.Date
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
-
+import io.restassured.response.Response
 
 
 object MockServer {
@@ -17,7 +17,6 @@ object MockServer {
     )
     val baseUrl: String = "http://localhost:8089"
     val validProjectIds:List<String> = listOf("123j9jk093803j3-22","123gdhnjetehetsl-45", "dsadasfasfsdasda-55","fdhdfgsdgsdffsdf231-22")
-    val createdAt:Date = Date()
     val validUsers:List<Map<String,String>> = listOf(
         mapOf(
             "mail" to "Artorias@gmail.com",
@@ -87,9 +86,17 @@ object MockServer {
         ),
     )
     val projectName:List<String> = listOf("Project Abyss","Project Reach", "Project Eclipse", "Project Dragon", "Project Dream", "Project Seireitei")
-    var projects: MutableList<Map<String,String>> = mutableListOf()
-    fun projectCreation(){
-
+    var projects: MutableList<Project> = mutableListOf()
+    fun generateProjectMetaData(project: Project) {
+        project.id = generateProjectIds()
+        project.createdAt = Date()
+    }
+    fun addProjectToServer(newProject: Project) {
+        projects.add(newProject)
+        println(projects)
+    }
+    fun generateProjectIds():String{
+        return "${(Math.random()*10000).toInt()}-${(Math.random()*10000).toInt()}-${(Math.random()*10000).toInt()}"
     }
     fun start(){
         if(!online){
@@ -133,7 +140,7 @@ object MockServer {
                 .withBody("""
                     {
                     "projectId": "${validProjectIds.random()}",
-                    "createdAt": "${createdAt}",
+                    "createdAt": "${null}",
                     "name": "{{jsonPath request.body '$.name'}}",
                     "privacy": "{{jsonPath request.body '$.privacy'}}"
                     },

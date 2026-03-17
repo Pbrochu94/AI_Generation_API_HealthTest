@@ -16,22 +16,24 @@ class ProjectApi {
         MockServer.start()
     }
     @Test
-    fun `project creation` (){
-        val newProject = Project(inputName = "Abyss", Privacy.PRIVATE)
+    fun `POST call with valid body to project endpoint return 201` (){
+        val newProject = Project("Abyss", Privacy.PRIVATE.string)
+        MockServer.generateProjectMetaData(newProject)
+        MockServer.addProjectToServer(newProject)
         val response = RestAssured.given()
             .baseUri(MockServer.baseUrl)
-            .log().body()
+            //.log().body()
             .`when`()
-            .body(mapOf("name" to newProject.getName(),
-                "privacy" to newProject.getPrivacy())
-            )
+            .body(newProject.getBaseInfoAsMap())
             .post("/project")
             .then()
-            .log().body()
+            //.log().body()
         .statusCode(201)
         .extract()
             .response()
-        println(response.body().jsonPath().getString(""))
+
+        println("--------------")
+        println(MockServer.projects)
     }
     @Test
     fun `Get an existing project returns details`(){

@@ -1,12 +1,15 @@
 package utils
 
-class Project(inputName:String,privacy: Privacy) {
-    private var name:String = inputName
-    private var privacy:Privacy = privacy
-    private var id:String? = null
-    private var createdAt:String? = null
-    private var updatedAt:String? = null
-    private var steps:List<Map<String,*>>? = null
-    fun getName():String{return name}
-    fun getPrivacy():String{return privacy.string}
+import java.util.Date
+
+data class Project(var name:String,
+                   var privacy:String,
+                   var id:String? = null,
+                   var createdAt: Date? = null,
+                   var updatedAt:Date? = null,
+                   var steps:List<Map<String,*>>? = null) {
+
+    fun getBaseInfoAsMap():Map<String,String> {
+        return mapOf("name" to name, "privacy" to privacy)
+    }
 }
