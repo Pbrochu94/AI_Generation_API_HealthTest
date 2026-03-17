@@ -17,21 +17,18 @@ class ProjectApi {
     }
     @Test
     fun `POST call with valid body to project endpoint return 201` (){
-        MockServer.projects.forEach {
-            println(it)
-        }
         val response = RestAssured.given()
             .baseUri(MockServer.baseUrl)
             //.log().body()
             .`when`()
-            .body(MockServer.projects.random().getBaseInfoAsMap())
+            .body(MockServer.projects.random())
             .post("/project")
             .then()
             .log().body()
         .statusCode(201)
-        .extract()
-            .response()
     }
+    @Test
+    fun `POST call with invalid body to project endpoint return 400` (){}
     @Test
     fun `Get an existing project returns details`(){
 
