@@ -157,10 +157,10 @@ object MockServer {
                 .withHeader("Content-Type", "application/json")
                 .withBody("""
                     {
-                    "projectId": "${projects[0].id}",
-                    "createdAt": "${projects[0].createdAt}",
                     "name": "{{jsonPath request.body '$.name'}}",
-                    "privacy": "{{jsonPath request.body '$.privacy'}}"
+                    "privacy": "{{jsonPath request.body '$.privacy'}}",
+                    "projectId": "{{jsonPath request.body '$.id'}}",
+                    "createdAt": "{{jsonPath request.body '$.createdAt'}}"
                     },
                 """.trimIndent())
             )
