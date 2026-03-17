@@ -16,7 +16,6 @@ object MockServer {
             .globalTemplating(true)
     )
     val baseUrl: String = "http://localhost:8089"
-    val validProjectIds:List<String> = listOf("123j9jk093803j3-22","123gdhnjetehetsl-45", "dsadasfasfsdasda-55","fdhdfgsdgsdffsdf231-22")
     val validUsers:List<Map<String,String>> = listOf(
         mapOf(
             "mail" to "Artorias@gmail.com",
@@ -85,24 +84,43 @@ object MockServer {
             "password" to "outdatedPassword",
         ),
     )
-    val projectName:List<String> = listOf("Project Abyss","Project Reach", "Project Eclipse", "Project Dragon", "Project Dream", "Project Seireitei")
+    val projectsBaseInfo:List<Map<String,String>> = listOf(
+        mapOf("name" to "Project Abyss", "privacy" to Privacy.PRIVATE.string),
+        mapOf("name" to "Project Reach", "privacy" to Privacy.PUBLIC.string),
+        mapOf("name" to "Project Eclipse", "privacy" to Privacy.PUBLIC.string),
+        mapOf("name" to "Project Dragon", "privacy" to Privacy.PUBLIC.string),
+        mapOf("name" to "Project Dream", "privacy" to Privacy.RESTRICTED.string),
+        mapOf("name" to "Project Seireitei", "privacy" to Privacy.PRIVATE.string),
+        mapOf("name" to "Project zeno", "privacy" to Privacy.PUBLIC.string),
+        mapOf("name" to "Project Racoon City", "privacy" to Privacy.PUBLIC.string),
+        mapOf("name" to "Project Grand Line", "privacy" to Privacy.RESTRICTED.string),
+        mapOf("name" to "Project Metroid", "privacy" to Privacy.PUBLIC.string),
+    )
     var projects: MutableList<Project> = mutableListOf()
+    fun initDatabase() {
+        projectsBaseInfo.forEach {
+            val newProject = Project(it.getValue("name"), it.getValue("privacy"))
+            generateProjectMetaData(newProject)
+            addProjectToServer(newProject)
+        }
+    }
     fun generateProjectMetaData(project: Project) {
-        project.id = generateProjectIds()
+        project.id = project.generateProjectIds()
         project.createdAt = Date()
     }
     fun addProjectToServer(newProject: Project) {
         projects.add(newProject)
-        println(projects)
-    }
-    fun generateProjectIds():String{
-        return "${(Math.random()*10000).toInt()}-${(Math.random()*10000).toInt()}-${(Math.random()*10000).toInt()}"
     }
     fun start(){
         if(!online){
             server.start()
             online = true
         }
+        else{
+            server.stop()
+            online = false
+        }
+        initDatabase()
         configureFor("localhost", 8089)
         //login VALID
         validUsers.forEach { user ->
@@ -139,8 +157,8 @@ object MockServer {
                 .withHeader("Content-Type", "application/json")
                 .withBody("""
                     {
-                    "projectId": "${validProjectIds.random()}",
-                    "createdAt": "${null}",
+                    "projectId": "${projects[0].id}",
+                    "createdAt": "${projects[0].createdAt}",
                     "name": "{{jsonPath request.body '$.name'}}",
                     "privacy": "{{jsonPath request.body '$.privacy'}}"
                     },
@@ -148,23 +166,23 @@ object MockServer {
             )
         )
         //get projects with VALID IDs
-        validProjectIds.forEach { id ->
-            server.stubFor(
-                get("/projects/$id")
-                    .willReturn(
-                        aResponse()
-                            .withStatus(200)
-                            .withHeader("Content-Type", "application/json")
-                            .withBody(
-                                """
-                                    {
-                                        "projectId": "$id",
-                                        "name": "Project $id"
-                                     }
-                                     """.trimIndent())
-                    )
-            )
-        }
+//        validProjectIds.forEach { id ->
+//            server.stubFor(
+//                get("/projects/$id")
+//                    .willReturn(
+//                        aResponse()
+//                            .withStatus(200)
+//                            .withHeader("Content-Type", "application/json")
+//                            .withBody(
+//                                """
+//                                    {
+//                                        "projectId": "$id",
+//                                        "name": "Project $id"
+//                                     }
+//                                     """.trimIndent())
+//                    )
+//            )
+//        }
         //get projects with INVALID IDs
         server.stubFor(
             get(urlPathMatching("/projects/.*"))

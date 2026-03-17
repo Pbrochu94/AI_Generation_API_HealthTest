@@ -12,4 +12,7 @@ data class Project(var name:String,
     fun getBaseInfoAsMap():Map<String,String> {
         return mapOf("name" to name, "privacy" to privacy)
     }
+    fun generateProjectIds():String{
+        return "${"%04d".format((0..9999).random())}-${"%04d".format((0..9999).random())}-${"%04d".format((0..9999).random())}"
+    }
 }
