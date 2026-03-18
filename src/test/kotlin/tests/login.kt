@@ -1,12 +1,20 @@
 package tests
 
-import com.github.tomakehurst.wiremock.http.Response.response
+import io.restassured.RestAssured
+import io.restassured.response.Response
+import org.eclipse.jetty.server.Request
 import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import utils.MockServer
 import utils.RequestBuilder
+import utils.RequestBuilder.loginBuilder
+import utils.getResponseError
+import utils.usersWithInvalidCredentials
+import utils.usersWithInvalidMail
+import utils.usersWithInvalidPassword
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class CredentialVerifications{
@@ -15,52 +23,44 @@ class CredentialVerifications{
         MockServer.start()
     }
     @Test
-    fun `Login with valid credentials returns 201`(){
-        var response = RequestBuilder.login(MockServer.validUsers.random())
-            .log().body()
-            .`when`()
+    fun `login with valid credentials returns 200`(){
+        val response: Response = loginBuilder(MockServer.validUsers.random())
             .post("/login")
             .then()
-            .statusCode(201)
+            .log().all()
             .extract()
-        response()
-        println(response.body().jsonPath().get<Map<String,String>>())
+            .response()
+        assertEquals(200, response.statusCode(), getResponseError(response))
     }
     @Test
-    fun `Login with invalid password returns 401`(){
-        var response = RequestBuilder.login(MockServer.usersWithInvalidPassword.random())
-            .log().body()
-            .`when`()
+    fun `login with invalid password returns 401`(){
+        val response:Response = loginBuilder(usersWithInvalidPassword.random())
             .post("/login")
             .then()
-            .statusCode(401)
+            .log().all()
             .extract()
-        response()
-        println(response.body().jsonPath().getString("error"))
+            .response()
+        assertEquals(401, response.statusCode(),getResponseError(response))
     }
     @Test
     fun `Login with invalid mail returns 401`(){
-        var response = RequestBuilder.login(MockServer.usersWithInvalidMail.random())
-            .log().body()
-            .`when`()
+        val response:Response = loginBuilder(usersWithInvalidMail.random())
             .post("/login")
             .then()
-            .statusCode(401)
+            .log().all()
             .extract()
-        response()
-        println(response.body().jsonPath().getString("error"))
+            .response()
+        assertEquals(401, response.statusCode(),getResponseError(response))
     }
     @Test
     fun `Login with invalid mail and invalid password returns 401`(){
-        var response = RequestBuilder.login(MockServer.usersWithInvalidCredentials.random())
-            .log().body()
-            .`when`()
+        val response:Response = loginBuilder(usersWithInvalidCredentials.random())
             .post("/login")
             .then()
-            .statusCode(401)
+            .log().all()
             .extract()
-        response()
-        println(response.body().jsonPath().getString("error"))
+            .response()
+        assertEquals(401, response.statusCode(),getResponseError(response))
     }
     @AfterAll
     fun destroyServer(){

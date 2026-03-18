@@ -6,6 +6,7 @@ import java.util.Date
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import io.restassured.response.Response
+import java.time.format.DateTimeFormatter
 
 
 object MockServer {
@@ -33,69 +34,6 @@ object MockServer {
             "password" to "Berserker01",
         ),
     )
-    val usersWithInvalidMail:List<Map<String,String>> = listOf(
-        mapOf(
-            "mail" to "Invalid@gmail.com",
-            "username" to "Artorias",
-            "password" to "abyssWalker01",
-        ),
-        mapOf(
-            "mail" to "NotValid@gmail.com",
-            "username" to "Master chief",
-            "password" to "Spartan117",
-        ),
-        mapOf(
-            "mail" to "Outdated.com",
-            "username" to "Guts",
-            "password" to "Berserker01",
-        ),
-    )
-    val usersWithInvalidPassword:List<Map<String,String>> = listOf(
-        mapOf(
-            "mail" to "Artorias@gmail.com",
-            "username" to "Artorias",
-            "password" to "badpassword",
-        ),
-        mapOf(
-            "mail" to "masterchief@gmail.com",
-            "username" to "Master chief",
-            "password" to "incorrectpassword",
-        ),
-        mapOf(
-            "mail" to "Guts@gmail.com",
-            "username" to "Guts",
-            "password" to "outdatedPassword",
-        ),
-    )
-    val usersWithInvalidCredentials:List<Map<String,String>> = listOf(
-        mapOf(
-            "mail" to "NotValid@gmail.com",
-            "username" to "Artorias",
-            "password" to "badpassword",
-        ),
-        mapOf(
-            "mail" to "Invalid@gmail.com",
-            "username" to "Master chief",
-            "password" to "incorrectpassword",
-        ),
-        mapOf(
-            "mail" to "Bad@gmail.com",
-            "username" to "Guts",
-            "password" to "outdatedPassword",
-        ),
-    )
-    val projectsBaseInfo:List<Map<String,String>> = listOf(
-        mapOf("name" to "Project Abyss", "privacy" to Privacy.PRIVATE.string),
-        mapOf("name" to "Project Reach", "privacy" to Privacy.PUBLIC.string),
-        mapOf("name" to "Project Eclipse", "privacy" to Privacy.PUBLIC.string),
-        mapOf("name" to "Project Dragon", "privacy" to Privacy.PUBLIC.string),
-        mapOf("name" to "Project Dream", "privacy" to Privacy.RESTRICTED.string),
-        mapOf("name" to "Project Seireitei", "privacy" to Privacy.PRIVATE.string),
-        mapOf("name" to "Project zeno", "privacy" to Privacy.PUBLIC.string),
-        mapOf("name" to "Project Racoon City", "privacy" to Privacy.PUBLIC.string),
-        mapOf("name" to "Project Grand Line", "privacy" to Privacy.RESTRICTED.string),
-        mapOf("name" to "Project Metroid", "privacy" to Privacy.PUBLIC.string),
-    )
     var projects: MutableList<Project> = mutableListOf()
     fun initDatabase() {
         projectsBaseInfo.forEach {
@@ -106,7 +44,7 @@ object MockServer {
     }
     fun generateProjectMetaData(project: Project) {
         project.id = project.generateProjectIds()
-        project.createdAt = Date()
+        project.createdAt = today()
     }
     fun addProjectToServer(newProject: Project) {
         projects.add(newProject)
@@ -128,7 +66,7 @@ object MockServer {
                 .withRequestBody(matchingJsonPath("$.mail",  equalTo(user["mail"])))
                 .withRequestBody(matchingJsonPath("$.password",  equalTo(user["password"])))
                 .willReturn(aResponse()
-                    .withStatus(201)
+                    .withStatus(200)
                     .withHeader("Content-Type", "application/json")
                     .withBody("""
                    {
@@ -152,6 +90,10 @@ object MockServer {
                """.trimIndent())))
         //project CREATION
         server.stubFor(post("/project")
+            .withRequestBody(matchingJsonPath("$.name"))
+            .withRequestBody(matchingJsonPath("$.privacy"))
+            .withRequestBody(matchingJsonPath("$.id"))
+            .withRequestBody(matchingJsonPath("$.createdAt"))
             .willReturn(aResponse()
                 .withStatus(201)
                 .withHeader("Content-Type", "application/json")
@@ -160,11 +102,27 @@ object MockServer {
                     "name": "{{jsonPath request.body '$.name'}}",
                     "privacy": "{{jsonPath request.body '$.privacy'}}",
                     "projectId": "{{jsonPath request.body '$.id'}}",
-                    "createdAt": "{{jsonPath request.body '$.createdAt'}}"
+                    "createdAt": "{{jsonPath request.body '$.createdAt'}}",
+                    "updatedAt": "{{jsonPath request.body '$.updatedAt'}}",
+                    "steps": "{{jsonPath request.body '$.steps'}}"
                     },
                 """.trimIndent())
             )
         )
+        //POST project with invalid body
+        server.stubFor(post("/project")
+            .atPriority(10)
+            .willReturn(aResponse()
+            .withStatus(401)
+            .withHeader("Content-Type", "application/json")
+            .withBody("""
+                {
+                "error": "Invalid body request"
+                }
+            """.trimIndent())
+        )
+        )
+
         //get projects with VALID IDs
 //        validProjectIds.forEach { id ->
 //            server.stubFor(
@@ -184,16 +142,16 @@ object MockServer {
 //            )
 //        }
         //get projects with INVALID IDs
-        server.stubFor(
-            get(urlPathMatching("/projects/.*"))
-                .atPriority(10) // priorité plus basse
-                .willReturn(
-                    aResponse()
-                        .withStatus(404)
-                        .withHeader("Content-Type", "application/json")
-                        .withBody("""{"Details": "No project matching the required ID"}""")
-                )
-        )
+//        server.stubFor(
+//            get(urlPathMatching("/projects/.*"))
+//                .atPriority(10) // priorité plus basse
+//                .willReturn(
+//                    aResponse()
+//                        .withStatus(404)
+//                        .withHeader("Content-Type", "application/json")
+//                        .withBody("""{"Details": "No project matching the required ID"}""")
+//                )
+//        )
     }
     fun stop(){
         server.stop()

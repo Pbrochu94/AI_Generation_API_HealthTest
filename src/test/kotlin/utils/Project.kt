@@ -5,12 +5,19 @@ import java.util.Date
 data class Project(var name:String,
                    var privacy:String,
                    var id:String? = null,
-                   var createdAt: Date? = null,
-                   var updatedAt:Date? = null,
+                   var createdAt: String? = null,
+                   var updatedAt:String? = null,
                    var steps:List<Map<String,*>>? = null) {
 
-    fun getBaseInfoAsMap():Map<String,String> {
-        return mapOf("name" to name, "privacy" to privacy)
+    fun getParametersAsMap():Map<String,Any?> {
+        return mutableMapOf(
+            "name" to name,
+            "privacy" to privacy,
+            "id" to id,
+            "createdAt" to createdAt,
+            "updatedAt" to updatedAt,
+            "steps" to steps
+        )
     }
     fun generateProjectIds():String{
         return "${"%04d".format((0..9999).random())}-${"%04d".format((0..9999).random())}-${"%04d".format((0..9999).random())}"
