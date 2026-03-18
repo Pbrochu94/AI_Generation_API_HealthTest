@@ -8,8 +8,10 @@ import utils.MockServer
 import utils.Privacy
 import utils.Project
 import utils.RequestBuilder
-import utils.RequestBuilder.projectBuilder
+import utils.RequestBuilder.getProjectBuilder
+import utils.RequestBuilder.projectCreationBuilder
 import utils.getResponseError
+import utils.invalidProjectId
 import utils.usersWithInvalidMail
 import java.util.Date
 
@@ -22,7 +24,7 @@ class ProjectApi {
     }
     @Test
     fun `POST call with valid body to project endpoint return 201` (){
-        val response = projectBuilder(MockServer.projects.random().getParametersAsMap())
+        val response = projectCreationBuilder(MockServer.projects.random().getParametersAsMap())
             .log().body()
             .post("/project")
             .then()
@@ -33,18 +35,34 @@ class ProjectApi {
     }
     @Test
     fun `POST call with invalid body to project endpoint return 401` (){
-        val response = projectBuilder(mapOf<String,String>("ProjectName" to "Virox"))
+        val response = projectCreationBuilder(mapOf<String,String>("ProjectName" to "Virox"))
             .body(mapOf<String,String>("projectName" to "Eclipse"))
             .post("/project")
             .then()
             .log().body()
             .extract()
             .response()
-        assertEquals(401, response.statusCode(), getResponseError(response))
+        assertEquals(400, response.statusCode(), getResponseError(response))
     }
     @Test
-    fun `Get an existing project returns details`(){
-
+    fun `GET call with valid project id return 200`(){
+        val response = getProjectBuilder()
+            .get("/project/${MockServer.projects.random().id}")
+            .then()
+            .log().body()
+        .extract()
+        .response()
+        assertEquals(200, response.statusCode(), getResponseError(response))
+    }
+    @Test
+    fun `GET call with invalid project id return 404`(){
+        val response = getProjectBuilder()
+            .get("/project/${invalidProjectId.random()}")
+            .then()
+            .log().body()
+            .extract()
+            .response()
+        assertEquals(404, response.statusCode(), getResponseError(response))
     }
     @AfterAll
     fun destroyServer(){

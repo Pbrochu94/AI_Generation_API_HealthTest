@@ -113,7 +113,7 @@ object MockServer {
         server.stubFor(post("/project")
             .atPriority(10)
             .willReturn(aResponse()
-            .withStatus(401)
+            .withStatus(400)
             .withHeader("Content-Type", "application/json")
             .withBody("""
                 {
@@ -124,34 +124,37 @@ object MockServer {
         )
 
         //get projects with VALID IDs
-//        validProjectIds.forEach { id ->
-//            server.stubFor(
-//                get("/projects/$id")
-//                    .willReturn(
-//                        aResponse()
-//                            .withStatus(200)
-//                            .withHeader("Content-Type", "application/json")
-//                            .withBody(
-//                                """
-//                                    {
-//                                        "projectId": "$id",
-//                                        "name": "Project $id"
-//                                     }
-//                                     """.trimIndent())
-//                    )
-//            )
-//        }
+        projects.forEach { project ->
+            server.stubFor(
+                get("/project/${project.id}")
+                    .willReturn(
+                        aResponse()
+                            .withStatus(200)
+                            .withHeader("Content-Type", "application/json")
+                            .withBody(
+                                """
+                                    {
+                                        "name": "${project.name}",
+                                        "privacy": "${project.privacy}",
+                                       "projectId": "${project.id}",
+                                        "createdAt": "${project.createdAt}",
+                                        "updatedAt": "${project.updatedAt}",
+                                     }
+                                     """.trimIndent())
+                    )
+            )
+        }
         //get projects with INVALID IDs
-//        server.stubFor(
-//            get(urlPathMatching("/projects/.*"))
-//                .atPriority(10) // priorité plus basse
-//                .willReturn(
-//                    aResponse()
-//                        .withStatus(404)
-//                        .withHeader("Content-Type", "application/json")
-//                        .withBody("""{"Details": "No project matching the required ID"}""")
-//                )
-//        )
+        server.stubFor(
+            get(urlPathMatching("/project/.*"))
+                .atPriority(10)
+                .willReturn(
+                    aResponse()
+                        .withStatus(404)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody("""{"Details": "No project matching the required ID"}""")
+                )
+        )
     }
     fun stop(){
         server.stop()

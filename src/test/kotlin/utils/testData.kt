@@ -64,3 +64,12 @@ val usersWithInvalidCredentials:List<Map<String,String>> = listOf(
         "password" to "outdatedPassword",
     ),
 )
+val invalidProjectId:List<String> = listOf(
+    "1234-3445-3445",
+    "3211-2345-6678",
+    "3746-0960-3455",
+    "1111-8599-6498",
+    "1267-0990-2337",
+    "0090-0690-4551",
+    "0000-0000-0000"
+)

@@ -20,7 +20,7 @@ object RequestBuilder{
             .`when`()
         return req
     }
-    fun projectBuilder(body:Map<String,Any?>): RequestSpecification {
+    fun projectCreationBuilder(body:Map<String,Any?>): RequestSpecification {
         val req: RequestSpecification = RestAssured.given()
             .baseUri(MockServer.baseUrl)
         .header("Content-Type", "application/json")
@@ -29,4 +29,13 @@ object RequestBuilder{
             .`when`()
         return req
     }
+    fun getProjectBuilder(): RequestSpecification{
+        val req: RequestSpecification = RestAssured.given()
+            .baseUri(MockServer.baseUrl)
+            .header("Content-Type", "application/json")
+            .header("Accept", "application/json")
+            .`when`()
+        return req
+    }
+
 }
