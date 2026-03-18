@@ -1,20 +1,19 @@
 package tests
 
-import io.restassured.RestAssured
 import io.restassured.response.Response
-import org.eclipse.jetty.server.Request
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import utils.MockServer
-import utils.RequestBuilder
 import utils.RequestBuilder.loginBuilder
+import utils.Users.userInvalidCredentials
+import utils.Users.userInvalidMail
+import utils.Users.userInvalidPassword
+import utils.Users.userValidCredentials
 import utils.getResponseError
-import utils.usersWithInvalidCredentials
-import utils.usersWithInvalidMail
-import utils.usersWithInvalidPassword
+
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class CredentialVerifications{
@@ -24,7 +23,8 @@ class CredentialVerifications{
     }
     @Test
     fun `login with valid credentials returns 200`(){
-        val response: Response = loginBuilder(MockServer.validUsers.random())
+        val response: Response = loginBuilder(userValidCredentials.random())
+            .log().body()
             .post("/login")
             .then()
             .log().all()
@@ -34,7 +34,7 @@ class CredentialVerifications{
     }
     @Test
     fun `login with invalid password returns 401`(){
-        val response:Response = loginBuilder(usersWithInvalidPassword.random())
+        val response:Response = loginBuilder(userInvalidPassword.random())
             .post("/login")
             .then()
             .log().all()
@@ -44,7 +44,7 @@ class CredentialVerifications{
     }
     @Test
     fun `Login with invalid mail returns 401`(){
-        val response:Response = loginBuilder(usersWithInvalidMail.random())
+        val response:Response = loginBuilder(userInvalidMail.random())
             .post("/login")
             .then()
             .log().all()
@@ -54,7 +54,7 @@ class CredentialVerifications{
     }
     @Test
     fun `Login with invalid mail and invalid password returns 401`(){
-        val response:Response = loginBuilder(usersWithInvalidCredentials.random())
+        val response:Response = loginBuilder(userInvalidCredentials.random())
             .post("/login")
             .then()
             .log().all()

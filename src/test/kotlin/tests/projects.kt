@@ -7,12 +7,13 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import utils.MockServer
 import utils.Privacy
 import utils.Project
+import utils.ProjectData.invalidProjectId
+import utils.ProjectData.projectValidBody
 import utils.RequestBuilder
 import utils.RequestBuilder.getProjectBuilder
 import utils.RequestBuilder.projectCreationBuilder
 import utils.getResponseError
-import utils.invalidProjectId
-import utils.usersWithInvalidMail
+
 import java.util.Date
 
 
@@ -24,7 +25,7 @@ class ProjectApi {
     }
     @Test
     fun `POST call with valid body to project endpoint return 201` (){
-        val response = projectCreationBuilder(MockServer.projects.random().getParametersAsMap())
+        val response = projectCreationBuilder(projectValidBody.random())
             .log().body()
             .post("/project")
             .then()
@@ -63,6 +64,10 @@ class ProjectApi {
             .extract()
             .response()
         assertEquals(404, response.statusCode(), getResponseError(response))
+    }
+    @Test
+    fun `Test`(){
+        println(projectValidBody)
     }
     @AfterAll
     fun destroyServer(){

@@ -6,6 +6,8 @@ import java.util.Date
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import io.restassured.response.Response
+import utils.ProjectData.populateTestValidBodyList
+import utils.ProjectData.projectsBaseInfo
 import java.time.format.DateTimeFormatter
 
 
@@ -17,7 +19,7 @@ object MockServer {
             .globalTemplating(true)
     )
     val baseUrl: String = "http://localhost:8089"
-    val validUsers:List<Map<String,String>> = listOf(
+    val users:List<Map<String,String>> = listOf(
         mapOf(
             "mail" to "Artorias@gmail.com",
             "username" to "Artorias",
@@ -39,6 +41,7 @@ object MockServer {
         projectsBaseInfo.forEach {
             val newProject = Project(it.getValue("name"), it.getValue("privacy"))
             generateProjectMetaData(newProject)
+            populateTestValidBodyList(newProject.getParametersAsMap())
             addProjectToServer(newProject)
         }
     }
@@ -61,7 +64,7 @@ object MockServer {
         initDatabase()
         configureFor("localhost", 8089)
         //login VALID
-        validUsers.forEach { user ->
+        users.forEach { user ->
             server.stubFor(post("/login")
                 .withRequestBody(matchingJsonPath("$.mail",  equalTo(user["mail"])))
                 .withRequestBody(matchingJsonPath("$.password",  equalTo(user["password"])))
