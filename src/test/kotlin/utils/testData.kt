@@ -31,7 +31,7 @@ object ProjectData{
 }
 
 object Users{
-    val userValidCredentials:List<Map<String,String>> = MockServer.users
+    val userValidCredentials:List<User> = MockServer.users
     val userInvalidMail:List<Map<String,String>> = listOf(
         mapOf(
             "mail" to "Invalid@gmail.com",

@@ -23,7 +23,7 @@ class CredentialVerifications{
     }
     @Test
     fun `login with valid credentials returns 200`(){
-        val response: Response = loginBuilder(userValidCredentials.random())
+        val response: Response = loginBuilder(userValidCredentials.random().credentialsToMap())
             .log().body()
             .post("/login")
             .then()

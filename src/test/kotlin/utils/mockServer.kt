@@ -19,22 +19,10 @@ object MockServer {
             .globalTemplating(true)
     )
     val baseUrl: String = "http://localhost:8089"
-    val users:List<Map<String,String>> = listOf(
-        mapOf(
-            "mail" to "Artorias@gmail.com",
-            "username" to "Artorias",
-            "password" to "abyssWalker01",
-        ),
-        mapOf(
-            "mail" to "masterchief@gmail.com",
-            "username" to "Master chief",
-            "password" to "Spartan117",
-        ),
-        mapOf(
-            "mail" to "Guts@gmail.com",
-            "username" to "Guts",
-            "password" to "Berserker01",
-        ),
+    val users:List<User> = listOf(
+        User("Artorias","Artorias@gmail.com","abyssWalker01"),
+        User("Master chief","masterchief@gmail.com","Spartan117"),
+        User("Guts","Guts@gmail.com","Berserker01"),
     )
     var projects: MutableList<Project> = mutableListOf()
     fun initDatabase() {
@@ -66,15 +54,15 @@ object MockServer {
         //login VALID
         users.forEach { user ->
             server.stubFor(post("/login")
-                .withRequestBody(matchingJsonPath("$.mail",  equalTo(user["mail"])))
-                .withRequestBody(matchingJsonPath("$.password",  equalTo(user["password"])))
+                .withRequestBody(matchingJsonPath("$.mail",  equalTo(user.mail)))
+                .withRequestBody(matchingJsonPath("$.password",  equalTo(user.password)))
                 .willReturn(aResponse()
                     .withStatus(200)
                     .withHeader("Content-Type", "application/json")
                     .withBody("""
                    {
                        "accountId": "01",
-                       "accountName": "${user["username"]}",
+                       "accountName": "${user.username}",
                    }
                """.trimIndent())))
         }
