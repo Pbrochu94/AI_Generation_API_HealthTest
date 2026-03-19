@@ -1,22 +1,14 @@
 package tests
 
-import com.github.tomakehurst.wiremock.http.Response.response
-import io.restassured.RestAssured
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
-import utils.BaseTest
-import utils.MockServer
-import utils.Privacy
-import utils.Project
-import utils.ProjectData.projectIdInvalid
-import utils.ProjectData.projectIdValid
-import utils.ProjectData.projectValidBody
-import utils.RequestBuilder
-import utils.RequestBuilder.projectCreationPost
-import utils.RequestBuilder.projectGet
-import utils.getResponseError
-
-import java.util.Date
+import utils.models.BaseTest
+import utils.data.ProjectData.projectIdInvalid
+import utils.data.ProjectData.projectIdValid
+import utils.data.ProjectData.projectValidBody
+import utils.helpers.RequestBuilder.projectCreationPost
+import utils.helpers.RequestBuilder.projectGet
+import utils.helpers.getResponseError
 
 
 class ProjectApi: BaseTest() {

@@ -1,6 +1,9 @@
-package utils
+package utils.data
 
-import org.eclipse.jetty.server.Authentication
+import utils.enums.Privacy
+import utils.models.Project
+import utils.models.User
+import utils.server.MockServer
 
 object ProjectData{
     val projectsBaseInfo:List<Map<String,String>> = listOf(
@@ -29,7 +32,7 @@ object ProjectData{
     fun populateValidBodyList(projectBody:Map<String,Any?>) {
         projectValidBody.add(projectBody)
     }
-    fun populateValidIdList(project:Project) {
+    fun populateValidIdList(project: Project) {
         projectIdValid.add(project.id!!)
     }
 }

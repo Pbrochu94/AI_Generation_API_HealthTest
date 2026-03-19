@@ -1,4 +1,4 @@
-package utils
+package utils.helpers
 
 import io.restassured.response.Response
 import java.time.LocalDate

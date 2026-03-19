@@ -1,6 +1,4 @@
-package utils
-
-import java.util.Date
+package utils.models
 
 data class Project(var name:String,
                    var privacy:String,

@@ -1,4 +1,4 @@
-package utils
+package utils.enums
 
 enum class Privacy(val string:String){
     PUBLIC("public"),
@@ -12,7 +12,7 @@ enum class Provider(val string:String){
     MAKO("mako");
     companion object{
         fun providersToRegex():String{
-            return Provider.values().joinToString("|") { it.string }
+            return values().joinToString("|") { it.string }
         }
     }
 }

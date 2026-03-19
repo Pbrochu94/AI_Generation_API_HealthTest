@@ -1,15 +1,15 @@
-package utils
+package utils.server
 
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import com.github.tomakehurst.wiremock.WireMockServer
-import java.util.Date
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
-import io.restassured.response.Response
-import utils.ProjectData.populateValidBodyList
-import utils.ProjectData.populateValidIdList
-import utils.ProjectData.projectsBaseInfo
-import java.time.format.DateTimeFormatter
+import utils.models.Project
+import utils.data.ProjectData.populateValidBodyList
+import utils.data.ProjectData.populateValidIdList
+import utils.data.ProjectData.projectsBaseInfo
+import utils.enums.Provider
+import utils.models.User
+import utils.helpers.today
 
 
 object MockServer {
@@ -21,9 +21,9 @@ object MockServer {
     )
     val baseUrl: String = "http://localhost:8089"
     val users:List<User> = listOf(
-        User("Artorias","Artorias@gmail.com","abyssWalker01"),
-        User("Master chief","masterchief@gmail.com","Spartan117"),
-        User("Guts","Guts@gmail.com","Berserker01"),
+        User("Artorias", "Artorias@gmail.com", "abyssWalker01"),
+        User("Master chief", "masterchief@gmail.com", "Spartan117"),
+        User("Guts", "Guts@gmail.com", "Berserker01"),
     )
     var projects: MutableList<Project> = mutableListOf()
     fun initDatabase() {
@@ -150,7 +150,7 @@ object MockServer {
         )
         projects.forEach { project ->
             server.stubFor(post("/project/${project.id}/step")
-                .withRequestBody(matchingJsonPath("$.provider", matching(Provider.providersToRegex())))
+                .withRequestBody(matchingJsonPath("$.provider", matching(Provider.Companion.providersToRegex())))
 //                .withRequestBody(matchingJsonPath("$.steps"))
 //                .withRequestBody(matchingJsonPath("$.steps"))
 //                .withRequestBody(matchingJsonPath("$.steps"))

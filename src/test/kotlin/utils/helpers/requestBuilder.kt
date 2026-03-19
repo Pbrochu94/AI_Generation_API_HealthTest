@@ -1,12 +1,8 @@
-package utils
+package utils.helpers
 
 import io.restassured.RestAssured
 import io.restassured.response.Response
-import io.restassured.specification.RequestSpecification
-import utils.MockServer
-import utils.ProjectData.projectIdInvalid
-import utils.ProjectData.projectIdValid
-import kotlin.text.get
+import utils.server.MockServer
 
 object RequestBuilder{
     fun loginPost(user:Map<String,String> ): Response{

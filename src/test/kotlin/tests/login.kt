@@ -1,19 +1,15 @@
 package tests
 
 import io.restassured.response.Response
-import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
-import utils.BaseTest
-import utils.MockServer
-import utils.RequestBuilder.loginPost
-import utils.Users.userInvalidCredentials
-import utils.Users.userInvalidMail
-import utils.Users.userInvalidPassword
-import utils.Users.userValidCredentials
-import utils.getResponseError
+import utils.models.BaseTest
+import utils.helpers.RequestBuilder.loginPost
+import utils.data.Users.userInvalidCredentials
+import utils.data.Users.userInvalidMail
+import utils.data.Users.userInvalidPassword
+import utils.data.Users.userValidCredentials
+import utils.helpers.getResponseError
 
 
 class CredentialVerifications: BaseTest(){
