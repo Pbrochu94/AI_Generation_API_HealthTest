@@ -8,6 +8,7 @@ import utils.data.ProjectData.populateValidBodyList
 import utils.data.ProjectData.populateValidIdList
 import utils.data.ProjectData.projectsBaseInfo
 import utils.enums.Provider
+import utils.enums.Tool
 import utils.models.User
 import utils.helpers.today
 
@@ -150,19 +151,34 @@ object MockServer {
         )
         projects.forEach { project ->
             server.stubFor(post("/project/${project.id}/step")
-                .withRequestBody(matchingJsonPath("$.provider", matching(Provider.Companion.providersToRegex())))
-//                .withRequestBody(matchingJsonPath("$.steps"))
-//                .withRequestBody(matchingJsonPath("$.steps"))
-//                .withRequestBody(matchingJsonPath("$.steps"))
+                .withRequestBody(matchingJsonPath("$.provider", matching(Provider.providersToRegex())))
+                .withRequestBody(matchingJsonPath("$.tool", matching(Tool.toolsToRegex())))
+                .withRequestBody(matchingJsonPath("$.prompt"))
                 .willReturn(aResponse()
-                .withStatus(200)
+                .withStatus(201)
                     .withHeader("Content-Type", "application/json")
                     .withBody("""
-                        "code":"OK"
+                        {
+                        "provider": ""{{jsonPath request.body '$.provider'}}"",
+                        "tool": ""{{jsonPath request.body '$.tool'}}"",
+                        "prompt": ""{{jsonPath request.body '$.prompt'}}"",
+                        "status": "In progress",
+                        "output":[]
+                        }
                     """.trimIndent())
                 )
             )
         }
+        server.stubFor(post(urlMatching("/project/.*/step"))
+        .atPriority(10)
+            .willReturn(aResponse()
+                .withStatus(404)
+                .withHeader("Content-Type", "application/json")
+                .withBody("""{
+                    "error": "No project matching the required ID"
+                    }""".trimIndent())
+            )
+        )
     }
     fun stop(){
         server.stop()

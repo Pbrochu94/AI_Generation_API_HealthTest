@@ -46,7 +46,7 @@ object RequestBuilder{
             .header("Accept", "application/json")
             .body(body)
             .`when`()
-            .post("/project/${MockServer.projects.random().id}/step")
+            .post("/project/${projectId}/step")
         return response
     }
 }
