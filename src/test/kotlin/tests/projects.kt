@@ -65,10 +65,6 @@ class ProjectApi {
             .response()
         assertEquals(404, response.statusCode(), getResponseError(response))
     }
-    @Test
-    fun `Test`(){
-        println(projectValidBody)
-    }
     @AfterAll
     fun destroyServer(){
         MockServer.stop()
