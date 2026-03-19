@@ -149,6 +149,7 @@ object MockServer {
                         .withBody("""{"Details": "No project matching the required ID"}""")
                 )
         )
+        //POST generation with correct project id and correct body parameters
         projects.forEach { project ->
             server.stubFor(post("/project/${project.id}/step")
                 .withRequestBody(matchingJsonPath("$.provider", matching(Provider.providersToRegex())))
@@ -169,16 +170,155 @@ object MockServer {
                 )
             )
         }
-        server.stubFor(post(urlMatching("/project/.*/step"))
-        .atPriority(10)
+        //POST generation with correct project id and correct body parameters
+        projects.forEach { project ->
+            server.stubFor(post("/project/${project.id}/step")
+                .withRequestBody(matchingJsonPath("$.provider", matching(Provider.providersToRegex())))
+                .withRequestBody(matchingJsonPath("$.tool", matching(Tool.toolsToRegex())))
+                .withRequestBody(matchingJsonPath("$.prompt"))
+                .willReturn(aResponse()
+                    .withStatus(201)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody("""
+                        {
+                        "provider": ""{{jsonPath request.body '$.provider'}}"",
+                        "tool": ""{{jsonPath request.body '$.tool'}}"",
+                        "prompt": ""{{jsonPath request.body '$.prompt'}}"",
+                        "status": "In progress",
+                        "output":[]
+                        }
+                    """.trimIndent())
+                )
+            )
+        }
+        //POST generation with missing provider parameter
+        projects.forEach { project ->
+            server.stubFor(post("/project/${project.id}/step")
+                .withRequestBody(matchingJsonPath("$.tool", matching(Tool.toolsToRegex())))
+                .withRequestBody(matchingJsonPath("$.prompt"))
+                .atPriority(8)
+                .willReturn(aResponse()
+                    .withStatus(400)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody("""
+                        {
+                        "error": "Missing required 'provider' parameter in body"
+                        }
+                    """.trimIndent())
+                )
+            )
+        }
+        //POST generation with wrong provider parameter
+        projects.forEach { project ->
+            server.stubFor(post("/project/${project.id}/step")
+                .withRequestBody(matchingJsonPath("$.provider", notMatching(Provider.providersToRegex())))
+                .withRequestBody(matchingJsonPath("$.tool", matching(Tool.toolsToRegex())))
+                .withRequestBody(matchingJsonPath("$.prompt"))
+                .atPriority(8)
+                .willReturn(aResponse()
+                    .withStatus(400)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody("""
+                        {
+                        "error": "Provider selected is invalid"
+                        }
+                    """.trimIndent())
+                )
+            )
+        }
+        //POST generation with missing tool parameter
+        projects.forEach { project ->
+            server.stubFor(post("/project/${project.id}/step")
+                .withRequestBody(matchingJsonPath("$.provider", matching(Provider.providersToRegex())))
+                .withRequestBody(matchingJsonPath("$.prompt"))
+                .atPriority(8)
+                .willReturn(aResponse()
+                    .withStatus(400)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody("""
+                        {
+                        "error": "Missing required 'tool' parameter in body"
+                        }
+                    """.trimIndent())
+                )
+            )
+        }
+        //POST generation with wrong tool parameter
+        projects.forEach { project ->
+            server.stubFor(post("/project/${project.id}/step")
+                .withRequestBody(matchingJsonPath("$.provider", matching(Provider.providersToRegex())))
+                .withRequestBody(matchingJsonPath("$.tool", notMatching(Tool.toolsToRegex())))
+                .withRequestBody(matchingJsonPath("$.prompt"))
+                .atPriority(8)
+                .willReturn(aResponse()
+                    .withStatus(400)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody("""
+                        {
+                        "error": "Tool selected is invalid"
+                        }
+                    """.trimIndent())
+                )
+            )
+        }
+        //POST generation with wrong tool and provider parameter
+        projects.forEach { project ->
+            server.stubFor(post("/project/${project.id}/step")
+                .withRequestBody(matchingJsonPath("$.provider", notMatching(Provider.providersToRegex())))
+                .withRequestBody(matchingJsonPath("$.tool", notMatching(Tool.toolsToRegex())))
+                .withRequestBody(matchingJsonPath("$.prompt"))
+                .atPriority(8)
+                .willReturn(aResponse()
+                    .withStatus(400)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody("""
+                        {
+                        "error": "Provider and tool selected are invalid"
+                        }
+                    """.trimIndent())
+                )
+            )
+        }
+        //POST generation with missing prompt parameter
+        projects.forEach { project ->
+            server.stubFor(post("/project/${project.id}/step")
+                .withRequestBody(matchingJsonPath("$.provider", matching(Provider.providersToRegex())))
+                .withRequestBody(matchingJsonPath("$.tool", matching(Tool.toolsToRegex())))
+                .atPriority(8)
+                .willReturn(aResponse()
+                    .withStatus(400)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody("""
+                        {
+                        "error": "Missing required 'prompt' parameter in body"
+                        }
+                    """.trimIndent())
+                )
+            )
+        }
+        //POST generation with incorrect project id
+        server.stubFor(post(urlPathMatching("/project/.*/step"))
+            .atPriority(10)
             .willReturn(aResponse()
                 .withStatus(404)
                 .withHeader("Content-Type", "application/json")
-                .withBody("""{
-                    "error": "No project matching the required ID"
-                    }""".trimIndent())
+                .withBody("""
+                       {
+                        "error": "No project matching the required ID"
+                       }
+                   """.trimIndent())
             )
         )
+//        server.stubFor(post(urlMatching("/project/.*/step"))
+//        .atPriority(10)
+//            .willReturn(aResponse()
+//                .withStatus(404)
+//                .withHeader("Content-Type", "application/json")
+//                .withBody("""{
+//                    "error": "No project matching the required ID"
+//                    }""".trimIndent())
+//            )
+//        )
     }
     fun stop(){
         server.stop()

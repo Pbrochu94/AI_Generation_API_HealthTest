@@ -14,7 +14,6 @@ import utils.helpers.getResponseError
 class NewGen: BaseTest() {
     @Test
     fun `POST call to step return 201`(){
-        println(Tool.toolsToRegex())
         val body:Map<String,Any> = mapOf(
             "provider" to Provider.MAKO.string,
             "tool" to Tool.PROMPT_TO_IMAGE.string,
@@ -26,5 +25,20 @@ class NewGen: BaseTest() {
             .extract()
             .response()
         assertEquals(201, response.statusCode)
+    }
+    @Test
+    fun `Test`(){
+        println(Tool.toolsToRegex())
+        val body:Map<String,Any> = mapOf(
+            "provider" to "sdas",
+            "tool" to "mmk",
+            "prompt" to "badt",
+        )
+        val response: Response = postStep(projectIdValid.random(),body)
+            .then()
+            //.log().all()
+            .extract()
+            .response()
+        assertEquals(201, response.statusCode , getResponseError(response))
     }
 }
