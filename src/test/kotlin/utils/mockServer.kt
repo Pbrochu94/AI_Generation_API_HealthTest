@@ -154,6 +154,13 @@ object MockServer {
 //                .withRequestBody(matchingJsonPath("$.steps"))
 //                .withRequestBody(matchingJsonPath("$.steps"))
 //                .withRequestBody(matchingJsonPath("$.steps"))
+                .willReturn(aResponse()
+                .withStatus(200)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody("""
+                        "code":"OK"
+                    """.trimIndent())
+                )
             )
         }
     }

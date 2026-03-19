@@ -4,6 +4,8 @@ import io.restassured.RestAssured
 import io.restassured.response.Response
 import io.restassured.specification.RequestSpecification
 import utils.MockServer
+import utils.ProjectData.projectIdInvalid
+import utils.ProjectData.projectIdValid
 import kotlin.text.get
 
 object RequestBuilder{
@@ -41,12 +43,14 @@ object RequestBuilder{
             .get("/project/${id}")
         return response
     }
-    fun postStep(): RequestSpecification{
-        val req: RequestSpecification = RestAssured.given()
+    fun postStep(projectId:String,body:Map<String,Any?>): Response{
+        val response: Response = RestAssured.given()
             .baseUri(MockServer.baseUrl)
             .header("Content-Type", "application/json")
             .header("Accept", "application/json")
+            .body(body)
             .`when`()
-        return req
+            .post("/project/${MockServer.projects.random().id}/step")
+        return response
     }
 }

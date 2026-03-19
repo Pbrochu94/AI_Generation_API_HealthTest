@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import utils.BaseTest
 import utils.MockServer
 import utils.RequestBuilder.loginPost
 import utils.Users.userInvalidCredentials
@@ -15,12 +16,7 @@ import utils.Users.userValidCredentials
 import utils.getResponseError
 
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class CredentialVerifications{
-    @BeforeAll
-    fun initServer(){
-        MockServer.start()
-    }
+class CredentialVerifications: BaseTest(){
     @Test
     fun `login with valid credentials returns 200`(){
         val response: Response = loginPost(userValidCredentials.random().credentialsToMap())
@@ -56,9 +52,5 @@ class CredentialVerifications{
             .extract()
             .response()
         assertEquals(401, response.statusCode(),getResponseError(response))
-    }
-    @AfterAll
-    fun destroyServer(){
-        MockServer.stop()
     }
 }

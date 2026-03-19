@@ -4,6 +4,7 @@ import com.github.tomakehurst.wiremock.http.Response.response
 import io.restassured.RestAssured
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
+import utils.BaseTest
 import utils.MockServer
 import utils.Privacy
 import utils.Project
@@ -18,12 +19,7 @@ import utils.getResponseError
 import java.util.Date
 
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class ProjectApi {
-    @BeforeAll
-    fun initServer(){
-        MockServer.start()
-    }
+class ProjectApi: BaseTest() {
     @Test
     fun `POST call with valid body to project endpoint return 201` (){
         val response = projectCreationPost(projectValidBody.random())
@@ -59,9 +55,5 @@ class ProjectApi {
             .extract()
             .response()
         assertEquals(404, response.statusCode(), getResponseError(response))
-    }
-    @AfterAll
-    fun destroyServer(){
-        MockServer.stop()
     }
 }
