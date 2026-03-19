@@ -92,3 +92,15 @@ object Users{
     )
 }
 
+object Prompt{
+    val validPrompt:List<String> = listOf(
+        "a wolf",
+        "a soldier",
+        "a dragon",
+        "villagers",
+        "a car",
+        "medieval weapons",
+        "a monster with horns"
+    )
+}
+
