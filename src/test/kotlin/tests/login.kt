@@ -7,7 +7,7 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import utils.MockServer
-import utils.RequestBuilder.loginBuilder
+import utils.RequestBuilder.loginPost
 import utils.Users.userInvalidCredentials
 import utils.Users.userInvalidMail
 import utils.Users.userInvalidPassword
@@ -23,9 +23,7 @@ class CredentialVerifications{
     }
     @Test
     fun `login with valid credentials returns 200`(){
-        val response: Response = loginBuilder(userValidCredentials.random().credentialsToMap())
-            .log().body()
-            .post("/login")
+        val response: Response = loginPost(userValidCredentials.random().credentialsToMap())
             .then()
             .log().all()
             .extract()
@@ -34,8 +32,7 @@ class CredentialVerifications{
     }
     @Test
     fun `login with invalid password returns 401`(){
-        val response:Response = loginBuilder(userInvalidPassword.random())
-            .post("/login")
+        val response:Response = loginPost(userInvalidPassword.random())
             .then()
             .log().all()
             .extract()
@@ -44,8 +41,7 @@ class CredentialVerifications{
     }
     @Test
     fun `Login with invalid mail returns 401`(){
-        val response:Response = loginBuilder(userInvalidMail.random())
-            .post("/login")
+        val response:Response = loginPost(userInvalidMail.random())
             .then()
             .log().all()
             .extract()
@@ -54,8 +50,7 @@ class CredentialVerifications{
     }
     @Test
     fun `Login with invalid mail and invalid password returns 401`(){
-        val response:Response = loginBuilder(userInvalidCredentials.random())
-            .post("/login")
+        val response:Response = loginPost(userInvalidCredentials.random())
             .then()
             .log().all()
             .extract()

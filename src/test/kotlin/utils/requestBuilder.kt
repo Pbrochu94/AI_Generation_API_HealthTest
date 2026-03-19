@@ -4,10 +4,11 @@ import io.restassured.RestAssured
 import io.restassured.response.Response
 import io.restassured.specification.RequestSpecification
 import utils.MockServer
+import kotlin.text.get
 
 object RequestBuilder{
-    fun loginBuilder(user:Map<String,String> ): RequestSpecification{
-        val req: RequestSpecification = RestAssured.given()
+    fun loginPost(user:Map<String,String> ): Response{
+        val response: Response = RestAssured.given()
             .baseUri(MockServer.baseUrl)
             .header("Content-Type", "application/json")
             .header("Accept", "application/json")
@@ -18,18 +19,29 @@ object RequestBuilder{
                 }
             """.trimIndent())
             .`when`()
-        return req
+            .post("/login")
+        return response
     }
-    fun projectCreationBuilder(body:Map<String,Any?>): RequestSpecification {
-        val req: RequestSpecification = RestAssured.given()
+    fun projectCreationPost(body:Map<String,Any?>): Response {
+        val response: Response = RestAssured.given()
             .baseUri(MockServer.baseUrl)
-        .header("Content-Type", "application/json")
-        .header("Accept", "application/json")
+            .header("Content-Type", "application/json")
+            .header("Accept", "application/json")
             .body(body)
             .`when`()
-        return req
+            .post("/project")
+        return response
     }
-    fun getProjectBuilder(): RequestSpecification{
+    fun projectGet(id:String?): Response{
+        val response: Response = RestAssured.given()
+            .baseUri(MockServer.baseUrl)
+            .header("Content-Type", "application/json")
+            .header("Accept", "application/json")
+            .`when`()
+            .get("/project/${id}")
+        return response
+    }
+    fun postStep(): RequestSpecification{
         val req: RequestSpecification = RestAssured.given()
             .baseUri(MockServer.baseUrl)
             .header("Content-Type", "application/json")
@@ -37,5 +49,4 @@ object RequestBuilder{
             .`when`()
         return req
     }
-
 }

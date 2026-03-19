@@ -15,7 +15,8 @@ object ProjectData{
         mapOf("name" to "Project Grand Line", "privacy" to Privacy.RESTRICTED.string),
         mapOf("name" to "Project Metroid", "privacy" to Privacy.PUBLIC.string),
     )
-    val invalidProjectId:List<String> = listOf(
+    val projectIdValid:MutableList<String> = mutableListOf()
+    val projectIdInvalid:List<String> = listOf(
         "1234-3445-3445",
         "3211-2345-6678",
         "3746-0960-3455",
@@ -25,8 +26,11 @@ object ProjectData{
         "0000-0000-0000"
     )
     val projectValidBody:MutableList<Map<String,Any?>> = mutableListOf()
-    fun populateTestValidBodyList(projectBody:Map<String,Any?>) {
+    fun populateValidBodyList(projectBody:Map<String,Any?>) {
         projectValidBody.add(projectBody)
+    }
+    fun populateValidIdList(project:Project) {
+        projectIdValid.add(project.id!!)
     }
 }
 

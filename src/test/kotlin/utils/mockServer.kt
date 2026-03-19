@@ -6,7 +6,8 @@ import java.util.Date
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import io.restassured.response.Response
-import utils.ProjectData.populateTestValidBodyList
+import utils.ProjectData.populateValidBodyList
+import utils.ProjectData.populateValidIdList
 import utils.ProjectData.projectsBaseInfo
 import java.time.format.DateTimeFormatter
 
@@ -29,7 +30,8 @@ object MockServer {
         projectsBaseInfo.forEach {
             val newProject = Project(it.getValue("name"), it.getValue("privacy"))
             generateProjectMetaData(newProject)
-            populateTestValidBodyList(newProject.getParametersAsMap())
+            populateValidBodyList(newProject.getParametersAsMap())
+            populateValidIdList(newProject)
             addProjectToServer(newProject)
         }
     }
@@ -108,7 +110,7 @@ object MockServer {
             .withHeader("Content-Type", "application/json")
             .withBody("""
                 {
-                "error": "Invalid body request"
+                "error": "Invalid request body"
                 }
             """.trimIndent())
         )
@@ -146,6 +148,14 @@ object MockServer {
                         .withBody("""{"Details": "No project matching the required ID"}""")
                 )
         )
+        projects.forEach { project ->
+            server.stubFor(post("/project/${project.id}/step")
+                .withRequestBody(matchingJsonPath("$.provider", matching(Provider.providersToRegex())))
+//                .withRequestBody(matchingJsonPath("$.steps"))
+//                .withRequestBody(matchingJsonPath("$.steps"))
+//                .withRequestBody(matchingJsonPath("$.steps"))
+            )
+        }
     }
     fun stop(){
         server.stop()

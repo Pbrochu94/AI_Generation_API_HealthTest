@@ -7,11 +7,12 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import utils.MockServer
 import utils.Privacy
 import utils.Project
-import utils.ProjectData.invalidProjectId
+import utils.ProjectData.projectIdInvalid
+import utils.ProjectData.projectIdValid
 import utils.ProjectData.projectValidBody
 import utils.RequestBuilder
-import utils.RequestBuilder.getProjectBuilder
-import utils.RequestBuilder.projectCreationBuilder
+import utils.RequestBuilder.projectCreationPost
+import utils.RequestBuilder.projectGet
 import utils.getResponseError
 
 import java.util.Date
@@ -25,42 +26,36 @@ class ProjectApi {
     }
     @Test
     fun `POST call with valid body to project endpoint return 201` (){
-        val response = projectCreationBuilder(projectValidBody.random())
-            .log().body()
-            .post("/project")
+        val response = projectCreationPost(projectValidBody.random())
             .then()
-            .log().body()
+            .log().all()
             .extract()
             .response()
         assertEquals(201, response.statusCode(), getResponseError(response))
     }
     @Test
-    fun `POST call with invalid body to project endpoint return 401` (){
-        val response = projectCreationBuilder(mapOf<String,String>("ProjectName" to "Virox"))
-            .body(mapOf<String,String>("projectName" to "Eclipse"))
-            .post("/project")
+    fun `POST call with invalid body to project endpoint return 400` (){
+        val response = projectCreationPost(mapOf<String,String>("projectName" to "Eclipse"))
             .then()
-            .log().body()
+            .log().all()
             .extract()
             .response()
         assertEquals(400, response.statusCode(), getResponseError(response))
     }
     @Test
     fun `GET call with valid project id return 200`(){
-        val response = getProjectBuilder()
-            .get("/project/${MockServer.projects.random().id}")
+        val response = projectGet(projectIdValid.random())
             .then()
-            .log().body()
+            .log().all()
         .extract()
         .response()
         assertEquals(200, response.statusCode(), getResponseError(response))
     }
     @Test
     fun `GET call with invalid project id return 404`(){
-        val response = getProjectBuilder()
-            .get("/project/${invalidProjectId.random()}")
+        val response = projectGet(projectIdInvalid.random())
             .then()
-            .log().body()
+            .log().all()
             .extract()
             .response()
         assertEquals(404, response.statusCode(), getResponseError(response))
