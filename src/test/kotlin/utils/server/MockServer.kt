@@ -309,16 +309,6 @@ object MockServer {
                    """.trimIndent())
             )
         )
-//        server.stubFor(post(urlMatching("/project/.*/step"))
-//        .atPriority(10)
-//            .willReturn(aResponse()
-//                .withStatus(404)
-//                .withHeader("Content-Type", "application/json")
-//                .withBody("""{
-//                    "error": "No project matching the required ID"
-//                    }""".trimIndent())
-//            )
-//        )
     }
     fun stop(){
         server.stop()

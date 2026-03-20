@@ -9,7 +9,6 @@ import utils.server.MockServer
 open class BaseTest {
     companion object {
         private var started = false
-
         @BeforeAll
         @JvmStatic
         fun startServer() {

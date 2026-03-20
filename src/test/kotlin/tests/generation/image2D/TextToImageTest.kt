@@ -26,4 +26,17 @@ class GenV2: BaseTest() {
             .response()
         assertEquals(201, response.statusCode)
     }
+    fun `POST returns in progress status`(){
+        val body:Map<String,Any> = mapOf(
+            "provider" to Provider.GENV2.string,
+            "tool" to Tool.PROMPT_TO_IMAGE.string,
+            "prompt" to Prompt.validPrompt.random(),
+        )
+        val response: Response = postStep(projectIdValid.random(),body)
+            .then()
+            .log().all()
+            .extract()
+            .response()
+        assertEquals(201, response.statusCode)
+    }
 }
