@@ -7,12 +7,16 @@ import utils.server.MockServer
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 open class BaseTest {
-    @BeforeAll
-    fun initServer() {
-        MockServer.start()
-    }
-    @AfterAll
-    fun destroyServer() {
-        MockServer.stop()
+    companion object {
+        private var started = false
+
+        @BeforeAll
+        @JvmStatic
+        fun startServer() {
+            if (!started) {
+                MockServer.start()
+                started = true
+            }
+        }
     }
 }
