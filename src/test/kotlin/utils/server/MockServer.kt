@@ -14,6 +14,8 @@ import utils.enums.Tool
 import utils.models.User
 import utils.helpers.today
 import utils.models.Generation
+import utils.models.JobResponseTransformer
+import kotlinx.coroutines.*
 
 
 object MockServer {
@@ -30,7 +32,7 @@ object MockServer {
         User("Guts", "Guts@gmail.com", "Berserker01"),
     )
     var projects: MutableList<Project> = mutableListOf()
-    var jobs:MutableList<Generation> = mutableListOf()
+    var job:Generation?=null
     fun initDatabase() {
         projectsBaseInfo.forEach {
             val newProject = Project(it.getValue("name"), it.getValue("privacy"))
@@ -48,18 +50,21 @@ object MockServer {
         projects.add(newProject)
     }
     fun startJob(generation: Generation, resultAwaited:String = "succeeded") {
-        generation.status = "In progress"
-        generation.progress = 0
-        println(generation.toString())
-        Thread.sleep(5000)
-        ongoingJob(generation, resultAwaited)
+        job = generation
+        GlobalScope.launch {
+            generation.status = "In progress"
+            generation.progress = 0
+
+            delay(5000)
+
+            ongoingJob(generation, resultAwaited)
+        }
     }
 
-    private fun ongoingJob(generation: Generation, resultAwaited:String) {
+    private suspend fun ongoingJob(generation: Generation, resultAwaited:String) {
         generation.status = "In progress"
         generation.progress = 50
-        println(generation.toString())
-        Thread.sleep(5000)
+        delay(5000)
         if(resultAwaited == "failed") failedJob(generation)
         else completedJob(generation)
     }
@@ -70,13 +75,11 @@ object MockServer {
             "imageUrl" to "https://fakeimg.pl/512x512/?text=AI+Image",
             "format" to Image2DFormat.entries.random().string
         )
-        println(generation.toString())
     }
     private fun failedJob(generation:Generation) {
         generation.status = "Failed"
         generation.progress = 100
         generation.output = null
-        println(generation.toString())
     }
     fun start(){
         if(!online){
@@ -88,7 +91,9 @@ object MockServer {
             online = false
         }
         initDatabase()
-        configureFor("localhost", 8089)
+        wireMockConfig()
+            .port(8089)
+            .extensions(JobResponseTransformer())
         //login VALID
         users.forEach { user ->
             server.stubFor(post("/login")
@@ -191,7 +196,7 @@ object MockServer {
                 .withRequestBody(matchingJsonPath("$.tool", matching(Tool.toolsToRegex())))
                 .withRequestBody(matchingJsonPath("$.prompt"))
                 .willReturn(aResponse()
-                .withStatus(201)
+                    .withStatus(201)
                     .withHeader("Content-Type", "application/json")
                     .withBody("""
                         {
@@ -207,22 +212,14 @@ object MockServer {
         }
         //POST generation with correct project id and correct body parameters
         projects.forEach { project ->
-            server.stubFor(post("/project/${project.id}/step")
+            server.stubFor(get("/project/${project.id}/step")
                 .withRequestBody(matchingJsonPath("$.provider", matching(Provider.providersToRegex())))
                 .withRequestBody(matchingJsonPath("$.tool", matching(Tool.toolsToRegex())))
                 .withRequestBody(matchingJsonPath("$.prompt"))
                 .willReturn(aResponse()
                     .withStatus(201)
                     .withHeader("Content-Type", "application/json")
-                    .withBody("""
-                        {
-                        "provider": ""{{jsonPath request.body '$.provider'}}"",
-                        "tool": ""{{jsonPath request.body '$.tool'}}"",
-                        "prompt": ""{{jsonPath request.body '$.prompt'}}"",
-                        "status": "In progress",
-                        "output":[]
-                        }
-                    """.trimIndent())
+                    .withTransformers("job-transformer")
                 )
             )
         }

@@ -17,6 +17,7 @@ dependencies {
     testImplementation("io.rest-assured:rest-assured:5.3.0")
     testImplementation("org.wiremock:wiremock:3.5.4")
     testImplementation("org.slf4j:slf4j-nop:2.0.13")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 }
 
 tasks.test {
