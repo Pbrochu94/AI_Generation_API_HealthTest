@@ -7,10 +7,13 @@ import utils.models.Project
 import utils.data.ProjectData.populateValidBodyList
 import utils.data.ProjectData.populateValidIdList
 import utils.data.ProjectData.projectsBaseInfo
+import utils.data.Prompt
+import utils.enums.Image2DFormat
 import utils.enums.Provider
 import utils.enums.Tool
 import utils.models.User
 import utils.helpers.today
+import utils.models.Generation
 
 
 object MockServer {
@@ -27,6 +30,7 @@ object MockServer {
         User("Guts", "Guts@gmail.com", "Berserker01"),
     )
     var projects: MutableList<Project> = mutableListOf()
+    var jobs:MutableList<Generation> = mutableListOf()
     fun initDatabase() {
         projectsBaseInfo.forEach {
             val newProject = Project(it.getValue("name"), it.getValue("privacy"))
@@ -42,6 +46,37 @@ object MockServer {
     }
     fun addProjectToServer(newProject: Project) {
         projects.add(newProject)
+    }
+    fun startJob(generation: Generation, resultAwaited:String = "succeeded") {
+        generation.status = "In progress"
+        generation.progress = 0
+        println(generation.toString())
+        Thread.sleep(5000)
+        ongoingJob(generation, resultAwaited)
+    }
+
+    private fun ongoingJob(generation: Generation, resultAwaited:String) {
+        generation.status = "In progress"
+        generation.progress = 50
+        println(generation.toString())
+        Thread.sleep(5000)
+        if(resultAwaited == "failed") failedJob(generation)
+        else completedJob(generation)
+    }
+    private fun completedJob(generation: Generation) {
+        generation.status = "Succeeded"
+        generation.progress = 100
+        generation.output = mapOf(
+            "imageUrl" to "https://fakeimg.pl/512x512/?text=AI+Image",
+            "format" to Image2DFormat.entries.random().string
+        )
+        println(generation.toString())
+    }
+    private fun failedJob(generation:Generation) {
+        generation.status = "Failed"
+        generation.progress = 100
+        generation.output = null
+        println(generation.toString())
     }
     fun start(){
         if(!online){

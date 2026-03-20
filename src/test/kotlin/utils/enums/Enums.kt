@@ -29,4 +29,7 @@ enum class Tool(val string:String){
     }
 }
 
-enum class Category(val string:String){}
+enum class Image2DFormat(val string:String){
+    PNG("png"),
+    JPEG("jpg"),
+}
