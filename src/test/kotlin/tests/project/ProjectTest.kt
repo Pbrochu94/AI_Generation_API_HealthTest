@@ -1,4 +1,4 @@
-package tests
+package tests.project
 
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -11,7 +11,7 @@ import utils.helpers.RequestBuilder.projectGet
 import utils.helpers.getResponseError
 
 
-class ProjectApi: BaseTest() {
+class ProjectEndpoint: BaseTest() {
     @Test
     fun `POST call with valid body to project endpoint return 201` (){
         val response = projectCreationPost(projectValidBody.random())

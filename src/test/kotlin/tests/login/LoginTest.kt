@@ -1,4 +1,4 @@
-package tests
+package tests.login
 
 import io.restassured.response.Response
 import org.junit.jupiter.api.Assertions.assertEquals
