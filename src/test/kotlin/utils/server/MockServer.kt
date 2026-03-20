@@ -97,6 +97,7 @@ object MockServer {
         //login VALID
         users.forEach { user ->
             server.stubFor(post("/login")
+                .withName("login VALID")
                 .withRequestBody(matchingJsonPath("$.mail",  equalTo(user.mail)))
                 .withRequestBody(matchingJsonPath("$.password",  equalTo(user.password)))
                 .willReturn(aResponse()
@@ -111,6 +112,7 @@ object MockServer {
         }
         //login INVALID
         server.stubFor(post("/login")
+            .withName("login INVALID")
             .withRequestBody(matchingJsonPath("$.mail"))
             .withRequestBody(matchingJsonPath("$.password"))
             .atPriority(10)
@@ -124,6 +126,7 @@ object MockServer {
                """.trimIndent())))
         //project CREATION
         server.stubFor(post("/project")
+            .withName("project CREATION")
             .withRequestBody(matchingJsonPath("$.name"))
             .withRequestBody(matchingJsonPath("$.privacy"))
             .withRequestBody(matchingJsonPath("$.id"))
@@ -145,6 +148,7 @@ object MockServer {
         )
         //POST project with invalid body
         server.stubFor(post("/project")
+            .withName("POST project with invalid body")
             .atPriority(10)
             .willReturn(aResponse()
             .withStatus(400)
@@ -161,6 +165,7 @@ object MockServer {
         projects.forEach { project ->
             server.stubFor(
                 get("/project/${project.id}")
+                    .withName("get projects with VALID IDs")
                     .willReturn(
                         aResponse()
                             .withStatus(200)
@@ -181,6 +186,7 @@ object MockServer {
         //get projects with INVALID IDs
         server.stubFor(
             get(urlPathMatching("/project/.*"))
+                .withName("get projects with INVALID IDs")
                 .atPriority(10)
                 .willReturn(
                     aResponse()
@@ -192,6 +198,7 @@ object MockServer {
         //POST generation with correct project id and correct body parameters
         projects.forEach { project ->
             server.stubFor(post("/project/${project.id}/step")
+                .withName("POST generation with correct project id and correct body parameters")
                 .withRequestBody(matchingJsonPath("$.provider", matching(Provider.providersToRegex())))
                 .withRequestBody(matchingJsonPath("$.tool", matching(Tool.toolsToRegex())))
                 .withRequestBody(matchingJsonPath("$.prompt"))
@@ -210,24 +217,13 @@ object MockServer {
                 )
             )
         }
-        //POST generation with correct project id and correct body parameters
-        projects.forEach { project ->
-            server.stubFor(get("/project/${project.id}/step")
-                .withRequestBody(matchingJsonPath("$.provider", matching(Provider.providersToRegex())))
-                .withRequestBody(matchingJsonPath("$.tool", matching(Tool.toolsToRegex())))
-                .withRequestBody(matchingJsonPath("$.prompt"))
-                .willReturn(aResponse()
-                    .withStatus(201)
-                    .withHeader("Content-Type", "application/json")
-                    .withTransformers("job-transformer")
-                )
-            )
-        }
         //POST generation with missing provider parameter
         projects.forEach { project ->
             server.stubFor(post("/project/${project.id}/step")
+                .withName("POST generation with missing provider parameter")
                 .withRequestBody(matchingJsonPath("$.tool", matching(Tool.toolsToRegex())))
                 .withRequestBody(matchingJsonPath("$.prompt"))
+                .withRequestBody(not(matchingJsonPath("$.provider")))
                 .atPriority(8)
                 .willReturn(aResponse()
                     .withStatus(400)
@@ -243,6 +239,7 @@ object MockServer {
         //POST generation with wrong provider parameter
         projects.forEach { project ->
             server.stubFor(post("/project/${project.id}/step")
+                .withName("POST generation with wrong provider parameter")
                 .withRequestBody(matchingJsonPath("$.provider", notMatching(Provider.providersToRegex())))
                 .withRequestBody(matchingJsonPath("$.tool", matching(Tool.toolsToRegex())))
                 .withRequestBody(matchingJsonPath("$.prompt"))
@@ -261,9 +258,10 @@ object MockServer {
         //POST generation with missing tool parameter
         projects.forEach { project ->
             server.stubFor(post("/project/${project.id}/step")
+                .withName("POST generation with missing tool parameter")
                 .withRequestBody(matchingJsonPath("$.provider", matching(Provider.providersToRegex())))
                 .withRequestBody(matchingJsonPath("$.prompt"))
-                .atPriority(8)
+                .withRequestBody(not(matchingJsonPath("$.tool")))
                 .willReturn(aResponse()
                     .withStatus(400)
                     .withHeader("Content-Type", "application/json")
@@ -278,6 +276,7 @@ object MockServer {
         //POST generation with wrong tool parameter
         projects.forEach { project ->
             server.stubFor(post("/project/${project.id}/step")
+                .withName("POST generation with wrong tool parameter")
                 .withRequestBody(matchingJsonPath("$.provider", matching(Provider.providersToRegex())))
                 .withRequestBody(matchingJsonPath("$.tool", notMatching(Tool.toolsToRegex())))
                 .withRequestBody(matchingJsonPath("$.prompt"))
@@ -296,6 +295,7 @@ object MockServer {
         //POST generation with wrong tool and provider parameter
         projects.forEach { project ->
             server.stubFor(post("/project/${project.id}/step")
+                .withName("POST generation with wrong tool and provider parameter")
                 .withRequestBody(matchingJsonPath("$.provider", notMatching(Provider.providersToRegex())))
                 .withRequestBody(matchingJsonPath("$.tool", notMatching(Tool.toolsToRegex())))
                 .withRequestBody(matchingJsonPath("$.prompt"))
@@ -314,8 +314,10 @@ object MockServer {
         //POST generation with missing prompt parameter
         projects.forEach { project ->
             server.stubFor(post("/project/${project.id}/step")
+                .withName("POST generation with missing prompt parameter")
                 .withRequestBody(matchingJsonPath("$.provider", matching(Provider.providersToRegex())))
                 .withRequestBody(matchingJsonPath("$.tool", matching(Tool.toolsToRegex())))
+                .withRequestBody(not(matchingJsonPath("$.prompt")))
                 .atPriority(8)
                 .willReturn(aResponse()
                     .withStatus(400)
@@ -330,6 +332,7 @@ object MockServer {
         }
         //POST generation with incorrect project id
         server.stubFor(post(urlPathMatching("/project/.*/step"))
+            .withName("POST generation with incorrect project id")
             .atPriority(10)
             .willReturn(aResponse()
                 .withStatus(404)
