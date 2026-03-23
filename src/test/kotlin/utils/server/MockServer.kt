@@ -4,18 +4,16 @@ import com.github.tomakehurst.wiremock.client.WireMock.*
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import utils.models.Project
-import utils.data.ProjectData.populateValidBodyList
 import utils.data.ProjectData.populateValidIdList
-import utils.data.ProjectData.projectsBaseInfo
-import utils.data.Prompt
 import utils.enums.Image2DFormat
 import utils.enums.Provider
 import utils.enums.Tool
 import utils.models.User
 import utils.helpers.today
 import utils.models.Generation
-import utils.models.JobResponseTransformer
 import kotlinx.coroutines.*
+import utils.data.ProjectData
+import utils.enums.Privacy
 
 
 object MockServer {
@@ -33,20 +31,9 @@ object MockServer {
     )
     var projects: MutableList<Project> = mutableListOf()
     fun initDatabase() {
-        projectsBaseInfo.forEach {
-            val newProject = Project(it.getValue("name"), it.getValue("privacy"))
-            generateProjectMetaData(newProject)
-            populateValidBodyList(newProject.getParametersAsMap())
-            populateValidIdList(newProject)
-            addProjectToServer(newProject)
+        ProjectData.projects.forEach { project ->
+            projects.add(project)
         }
-    }
-    fun generateProjectMetaData(project: Project) {
-        project.id = project.generateProjectIds()
-        project.createdAt = today()
-    }
-    fun addProjectToServer(newProject: Project) {
-        projects.add(newProject)
     }
     fun start(){
         if(!online){
@@ -60,7 +47,6 @@ object MockServer {
         initDatabase()
         wireMockConfig()
             .port(8089)
-            .extensions(JobResponseTransformer())
         //login VALID
         users.forEach { user ->
             server.stubFor(post("/login")
@@ -145,8 +131,7 @@ object MockServer {
                                        "projectId": "${project.id}",
                                         "createdAt": "${project.createdAt}",
                                         "updatedAt": "${project.updatedAt}",
-                                        "status":"${}",
-                                        "progress": "${jobProgress}"
+                                        "steps": "${project.steps}",
                                      }
                                      """.trimIndent())
                     )

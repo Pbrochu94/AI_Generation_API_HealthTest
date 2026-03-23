@@ -1,13 +1,13 @@
 package utils.models
 
-data class Project(var name:String,
-                   var privacy:String,
-                   var id:String? = null,
-                   var createdAt: String? = null,
-                   var updatedAt:String? = null,
-                   var steps:List<Map<String,*>>? = null) {
+import utils.helpers.generateRandomId
+import utils.helpers.today
 
-    fun getParametersAsMap():Map<String,Any?> {
+data class Project(var name:String, var privacy:String, var steps:List<Generation>? = null) {
+    var id:String = generateRandomId()
+    var createdAt: String = today()
+    var updatedAt:String? = null
+    fun getRequestBody():Map<String,Any?> {
         return mutableMapOf(
             "name" to name,
             "privacy" to privacy,
@@ -16,8 +16,5 @@ data class Project(var name:String,
             "updatedAt" to updatedAt,
             "steps" to steps
         )
-    }
-    fun generateProjectIds():String{
-        return "${"%04d".format((0..9999).random())}-${"%04d".format((0..9999).random())}-${"%04d".format((0..9999).random())}"
     }
 }

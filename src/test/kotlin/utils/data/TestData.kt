@@ -1,24 +1,27 @@
 package utils.data
 
+import kotlinx.coroutines.Job
 import utils.enums.Privacy
+import utils.models.Generation
 import utils.models.Project
 import utils.models.User
 import utils.server.MockServer
 
 object ProjectData{
-    val projectsBaseInfo:List<Map<String,String>> = listOf(
-        mapOf("name" to "Project Abyss", "privacy" to Privacy.PRIVATE.string),
-        mapOf("name" to "Project Reach", "privacy" to Privacy.PUBLIC.string),
-        mapOf("name" to "Project Eclipse", "privacy" to Privacy.PUBLIC.string),
-        mapOf("name" to "Project Dragon", "privacy" to Privacy.PUBLIC.string),
-        mapOf("name" to "Project Dream", "privacy" to Privacy.RESTRICTED.string),
-        mapOf("name" to "Project Seireitei", "privacy" to Privacy.PRIVATE.string),
-        mapOf("name" to "Project zeno", "privacy" to Privacy.PUBLIC.string),
-        mapOf("name" to "Project Racoon City", "privacy" to Privacy.PUBLIC.string),
-        mapOf("name" to "Project Grand Line", "privacy" to Privacy.RESTRICTED.string),
-        mapOf("name" to "Project Metroid", "privacy" to Privacy.PUBLIC.string),
-    )
-    val projectIdValid:MutableList<String> = mutableListOf()
+    val projects:List<Project> = listOf(
+        Project("Abyss", Privacy.PRIVATE.string, listOf(GenerationData.jobList.random())),
+        Project("Reach", Privacy.PUBLIC.string, listOf(GenerationData.jobList.random(), GenerationData.jobList.random())),
+        Project("Eclipse", Privacy.PUBLIC.string, listOf(GenerationData.jobList.random())),
+        Project("Dragon", Privacy.PUBLIC.string, listOf(GenerationData.jobList.random(), GenerationData.jobList.random())),
+        Project("Dream", Privacy.RESTRICTED.string, listOf(GenerationData.jobList.random(), GenerationData.jobList.random(),
+            GenerationData.jobList.random(), GenerationData.jobList.random())),
+        Project("Seireitei", Privacy.PRIVATE.string, listOf(GenerationData.jobList.random())),
+        Project("Zeno", Privacy.PUBLIC.string),
+        Project("Racoon City", Privacy.PUBLIC.string, listOf(GenerationData.jobList.random(), GenerationData.jobList.random())),
+        Project("Grand Line", Privacy.RESTRICTED.string, listOf(GenerationData.jobList.random(), GenerationData.jobList.random(), GenerationData.jobList.random())),
+        Project("Metroid", Privacy.PUBLIC.string, listOf(GenerationData.jobList.random())),
+        )
+    val projectIdValid:List<String> = populateValidIdList()
     val projectIdInvalid:List<String> = listOf(
         "1234-3445-3445",
         "3211-2345-6678",
@@ -28,16 +31,16 @@ object ProjectData{
         "0090-0690-4551",
         "0000-0000-0000"
     )
-    val projectValidBody:MutableList<Map<String,Any?>> = mutableListOf()
-    fun populateValidBodyList(projectBody:Map<String,Any?>) {
-        projectValidBody.add(projectBody)
-    }
-    fun populateValidIdList(project: Project) {
-        projectIdValid.add(project.id!!)
+    fun populateValidIdList():List<String> {
+        var idList:MutableList<String> = mutableListOf()
+        projects.forEach { project ->
+            idList.add(project.id)
+        }
+        return idList
     }
 }
 
-object Users{
+object UsersData{
     val userValidCredentials:List<User> = MockServer.users
     val userInvalidMail:List<Map<String,String>> = listOf(
         mapOf(
@@ -92,8 +95,8 @@ object Users{
     )
 }
 
-object Prompt{
-    val validPrompt:List<String> = listOf(
+object GenerationData{
+    val validPromptList:List<String> = listOf(
         "a wolf",
         "a soldier",
         "a dragon",
@@ -102,5 +105,19 @@ object Prompt{
         "medieval weapons",
         "a monster with horns"
     )
+    val jobList:List<Generation> = listOf(
+        Generation(),
+        Generation(),
+        Generation(),
+        Generation(),
+        Generation(),
+        Generation(),
+        Generation(),
+        Generation(),
+        Generation(),
+        Generation(),
+        Generation(),
+    )
 }
+
 

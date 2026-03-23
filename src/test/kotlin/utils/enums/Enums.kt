@@ -12,7 +12,7 @@ enum class Provider(val string:String){
     MAKO("mako");
     companion object{
         fun providersToRegex():String{
-            return values().joinToString("|") { it.string }
+            return entries.joinToString("|") { it.string }
         }
     }
 }
@@ -24,10 +24,18 @@ enum class Tool(val string:String){
     ERASE("image_modification_erase");
     companion object{
         fun toolsToRegex():String{
-            return values().joinToString("|") { it.string }
+            return entries.joinToString("|") { it.string }
         }
     }
 }
+
+enum class Status(val string:String){
+    N_A("n/a"),
+    IN_PROGRESS("in progress"),
+    SUCCESS("succeeded"),
+    FAILURE("failed"),
+}
+
 
 enum class Image2DFormat(val string:String){
     PNG("png"),

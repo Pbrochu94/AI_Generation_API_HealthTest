@@ -11,3 +11,7 @@ fun today(): String {
 fun getResponseError(response:Response): String? {
     return response.body.jsonPath().getString("error")
 }
+
+fun generateRandomId(): String {
+    return "${"%04d".format((0..9999).random())}-${"%04d".format((0..9999).random())}-${"%04d".format((0..9999).random())}"
+}
