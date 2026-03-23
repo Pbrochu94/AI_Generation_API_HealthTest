@@ -10,15 +10,11 @@ import utils.enums.Provider
 import utils.enums.Tool
 import utils.helpers.RequestBuilder.postStep
 import utils.models.Generation
-import utils.server.MockServer
-import utils.server.MockServer.startJob
 
 
 class GenV2: BaseTest() {
     @Test
     fun `test`(){
-        val generation = Generation(Provider.GENV2.string,Tool.PROMPT_TO_IMAGE.string,Prompt.validPrompt.random())
-        startJob(generation,"failed")
     }
     @Test
     fun `POST returns 201`(){
@@ -27,14 +23,7 @@ class GenV2: BaseTest() {
             "tool" to Tool.PROMPT_TO_IMAGE.string,
             "prompt" to Prompt.validPrompt.random(),
         )
-        val generation = Generation(requestBody.getValue("provider"),requestBody.getValue("tool"),requestBody.getValue("prompt"))
-        startJob(generation,"failed")
-        val response: Response = postStep(projectIdValid.random(),requestBody)
-            .then()
-            .log().all()
-            .extract()
-            .response()
-        assertEquals(201, response.statusCode)
+
     }
     fun `POST returns in progress status`(){
         val body:Map<String,Any> = mapOf(

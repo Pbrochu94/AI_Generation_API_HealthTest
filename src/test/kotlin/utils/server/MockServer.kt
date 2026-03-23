@@ -32,7 +32,6 @@ object MockServer {
         User("Guts", "Guts@gmail.com", "Berserker01"),
     )
     var projects: MutableList<Project> = mutableListOf()
-    var job:Generation?=null
     fun initDatabase() {
         projectsBaseInfo.forEach {
             val newProject = Project(it.getValue("name"), it.getValue("privacy"))
@@ -48,38 +47,6 @@ object MockServer {
     }
     fun addProjectToServer(newProject: Project) {
         projects.add(newProject)
-    }
-    fun startJob(generation: Generation, resultAwaited:String = "succeeded") {
-        job = generation
-        GlobalScope.launch {
-            generation.status = "In progress"
-            generation.progress = 0
-
-            delay(5000)
-
-            ongoingJob(generation, resultAwaited)
-        }
-    }
-
-    private suspend fun ongoingJob(generation: Generation, resultAwaited:String) {
-        generation.status = "In progress"
-        generation.progress = 50
-        delay(5000)
-        if(resultAwaited == "failed") failedJob(generation)
-        else completedJob(generation)
-    }
-    private fun completedJob(generation: Generation) {
-        generation.status = "Succeeded"
-        generation.progress = 100
-        generation.output = mapOf(
-            "imageUrl" to "https://fakeimg.pl/512x512/?text=AI+Image",
-            "format" to Image2DFormat.entries.random().string
-        )
-    }
-    private fun failedJob(generation:Generation) {
-        generation.status = "Failed"
-        generation.progress = 100
-        generation.output = null
     }
     fun start(){
         if(!online){
@@ -178,6 +145,8 @@ object MockServer {
                                        "projectId": "${project.id}",
                                         "createdAt": "${project.createdAt}",
                                         "updatedAt": "${project.updatedAt}",
+                                        "status":"${}",
+                                        "progress": "${jobProgress}"
                                      }
                                      """.trimIndent())
                     )
