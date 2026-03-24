@@ -19,16 +19,22 @@ class ProjectEndpoint: BaseTest() {
             .log().all()
             .extract()
             .response()
-        assertEquals(201, response.statusCode()){getResponseError(response)}
+        assertEquals(201, response.statusCode())
     }
     @Test
-    fun `POST call with invalid body to project endpoint return 400` (){
+    fun `POST call with invalid body to project endpoint return 400 and accurate error message` (){
         val response = projectCreationPost(mapOf<String,String>("Color" to "Black"))
             .then()
             .log().all()
             .extract()
             .response()
-        assertEquals(400, response.statusCode()){getResponseError(response)}
+        assertAll(
+            {
+                assertEquals(400, response.statusCode())
+                assertEquals("Invalid request body", getResponseError(response))
+            }
+        )
+
     }
     @Test
     fun `GET call with valid project id return 200`(){
@@ -37,15 +43,20 @@ class ProjectEndpoint: BaseTest() {
             .log().all()
         .extract()
         .response()
-        assertEquals(200, response.statusCode()){getResponseError(response)}
+        assertEquals(200, response.statusCode())
     }
     @Test
-    fun `GET call with invalid project id return 404`(){
+    fun `GET call with invalid project id return 404 and accurate error message`(){
         val response = projectGet(projectIdInvalid.random())
             .then()
             .log().all()
             .extract()
             .response()
-        assertEquals(404, response.statusCode()){getResponseError(response)}
+        assertAll(
+            {
+                assertEquals(404, response.statusCode())
+                assertEquals("No project matching the required ID", getResponseError(response))
+            }
+        )
     }
 }

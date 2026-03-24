@@ -15,7 +15,7 @@ data class Generation (
     var progress: Int? = null,
     var output:Map<String,Any?>? = null
 ) {
-    fun getRequestBody():Map<String,Any?> {
+    fun getRequestBody():MutableMap<String,Any?> {
         return mutableMapOf(
             "id" to id,
             "tool" to tool,

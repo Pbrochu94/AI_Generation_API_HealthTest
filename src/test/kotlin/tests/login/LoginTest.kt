@@ -3,6 +3,7 @@ package tests.login
 import io.restassured.response.Response
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertAll
 import utils.models.BaseTest
 import utils.helpers.RequestBuilder.loginPost
 import utils.data.UsersData.userInvalidCredentials
@@ -41,12 +42,18 @@ class CredentialVerifications: BaseTest(){
         assertEquals(401, response.statusCode()){getResponseError(response)}
     }
     @Test
-    fun `Login with invalid mail and invalid password returns 401`(){
+    fun `Login with invalid mail and invalid password returns 401 and accurate error message`(){
         val response:Response = loginPost(userInvalidCredentials.random())
             .then()
             .log().all()
             .extract()
             .response()
-        assertEquals(401, response.statusCode()){getResponseError(response)}
+        assertAll(
+            {
+                assertEquals(401, response.statusCode())
+                assertEquals("Invalid credentials", getResponseError(response))
+            }
+        )
+
     }
 }

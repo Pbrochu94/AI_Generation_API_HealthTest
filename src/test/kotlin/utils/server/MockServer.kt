@@ -137,7 +137,7 @@ object MockServer {
                     )
             )
         }
-        //get projects with INVALID IDs
+        //GET projects with INVALID IDs
         server.stubFor(
             get(urlPathMatching("/project/.*"))
                 .withName("get projects with INVALID IDs")
@@ -146,7 +146,7 @@ object MockServer {
                     aResponse()
                         .withStatus(404)
                         .withHeader("Content-Type", "application/json")
-                        .withBody("""{"Details": "No project matching the required ID"}""")
+                        .withBody("""{"error": "No project matching the required ID"}""")
                 )
         )
         //POST generation with correct project id and correct body parameters
@@ -161,6 +161,7 @@ object MockServer {
                     .withHeader("Content-Type", "application/json")
                     .withBody("""
                         {
+                        "id": "${project.id}",
                         "provider": ""{{jsonPath request.body '$.provider'}}"",
                         "tool": ""{{jsonPath request.body '$.tool'}}"",
                         "prompt": ""{{jsonPath request.body '$.prompt'}}"",
