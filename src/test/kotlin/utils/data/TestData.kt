@@ -1,6 +1,5 @@
 package utils.data
 
-import kotlinx.coroutines.Job
 import utils.enums.Privacy
 import utils.models.Generation
 import utils.models.Project

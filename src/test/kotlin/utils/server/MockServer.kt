@@ -4,16 +4,10 @@ import com.github.tomakehurst.wiremock.client.WireMock.*
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import utils.models.Project
-import utils.data.ProjectData.populateValidIdList
-import utils.enums.Image2DFormat
 import utils.enums.Provider
 import utils.enums.Tool
 import utils.models.User
-import utils.helpers.today
-import utils.models.Generation
-import kotlinx.coroutines.*
 import utils.data.ProjectData
-import utils.enums.Privacy
 
 
 object MockServer {
@@ -299,6 +293,7 @@ object MockServer {
                    """.trimIndent())
             )
         )
+        server.stubFor(get(urlPathMatching("/project/.*/step")))
     }
     fun stop(){
         server.stop()

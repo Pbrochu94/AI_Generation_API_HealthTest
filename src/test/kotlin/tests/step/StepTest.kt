@@ -5,11 +5,8 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
 import utils.data.GenerationData
-import utils.data.ProjectData
 import utils.data.ProjectData.projectIdInvalid
 import utils.data.ProjectData.projectIdValid
-import utils.enums.Provider
-import utils.enums.Tool
 import utils.helpers.RequestBuilder.postStep
 import utils.helpers.getResponseError
 import utils.models.BaseTest
