@@ -4,8 +4,8 @@ import com.github.tomakehurst.wiremock.client.WireMock.*
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import utils.models.Project
-import utils.enums.Provider
-import utils.enums.Tool
+import utils.enums.Providers
+import utils.enums.Tools
 import utils.models.User
 import utils.data.ProjectData
 import utils.data.UsersData
@@ -151,8 +151,8 @@ object MockServer {
             //POST generation with correct project id and correct body parameters
             server.stubFor(post("/project/${project.id}/step")
                 .withName("POST generation with correct project id and correct body parameters")
-                .withRequestBody(matchingJsonPath("$.provider", matching(Provider.providersToRegex())))
-                .withRequestBody(matchingJsonPath("$.tool", matching(Tool.toolsToRegex())))
+                .withRequestBody(matchingJsonPath("$.provider", matching(Providers.providersToRegex())))
+                .withRequestBody(matchingJsonPath("$.tool", matching(Tools.toolsToRegex())))
                 .withRequestBody(matchingJsonPath("$.prompt"))
                 .willReturn(aResponse()
                     .withStatus(201)
@@ -172,7 +172,7 @@ object MockServer {
             //POST generation with missing provider parameter
             server.stubFor(post("/project/${project.id}/step")
                 .withName("POST generation with missing provider parameter")
-                .withRequestBody(matchingJsonPath("$.tool", matching(Tool.toolsToRegex())))
+                .withRequestBody(matchingJsonPath("$.tool", matching(Tools.toolsToRegex())))
                 .withRequestBody(matchingJsonPath("$.prompt"))
                 .withRequestBody(not(matchingJsonPath("$.provider")))
                 .atPriority(8)
@@ -189,8 +189,8 @@ object MockServer {
             //POST generation with wrong provider parameter
             server.stubFor(post("/project/${project.id}/step")
                 .withName("POST generation with wrong provider parameter")
-                .withRequestBody(matchingJsonPath("$.provider", notMatching(Provider.providersToRegex())))
-                .withRequestBody(matchingJsonPath("$.tool", matching(Tool.toolsToRegex())))
+                .withRequestBody(matchingJsonPath("$.provider", notMatching(Providers.providersToRegex())))
+                .withRequestBody(matchingJsonPath("$.tool", matching(Tools.toolsToRegex())))
                 .withRequestBody(matchingJsonPath("$.prompt"))
                 .atPriority(8)
                 .willReturn(aResponse()
@@ -206,7 +206,7 @@ object MockServer {
             //POST generation with missing tool parameter
             server.stubFor(post("/project/${project.id}/step")
                 .withName("POST generation with missing tool parameter")
-                .withRequestBody(matchingJsonPath("$.provider", matching(Provider.providersToRegex())))
+                .withRequestBody(matchingJsonPath("$.provider", matching(Providers.providersToRegex())))
                 .withRequestBody(matchingJsonPath("$.prompt"))
                 .withRequestBody(not(matchingJsonPath("$.tool")))
                 .willReturn(aResponse()
@@ -222,8 +222,8 @@ object MockServer {
             //POST generation with wrong tool parameter
             server.stubFor(post("/project/${project.id}/step")
                 .withName("POST generation with wrong tool parameter")
-                .withRequestBody(matchingJsonPath("$.provider", matching(Provider.providersToRegex())))
-                .withRequestBody(matchingJsonPath("$.tool", notMatching(Tool.toolsToRegex())))
+                .withRequestBody(matchingJsonPath("$.provider", matching(Providers.providersToRegex())))
+                .withRequestBody(matchingJsonPath("$.tool", notMatching(Tools.toolsToRegex())))
                 .withRequestBody(matchingJsonPath("$.prompt"))
                 .atPriority(8)
                 .willReturn(aResponse()
@@ -239,8 +239,8 @@ object MockServer {
             //POST generation with wrong tool and provider parameter
             server.stubFor(post("/project/${project.id}/step")
                 .withName("POST generation with wrong tool and provider parameter")
-                .withRequestBody(matchingJsonPath("$.provider", notMatching(Provider.providersToRegex())))
-                .withRequestBody(matchingJsonPath("$.tool", notMatching(Tool.toolsToRegex())))
+                .withRequestBody(matchingJsonPath("$.provider", notMatching(Providers.providersToRegex())))
+                .withRequestBody(matchingJsonPath("$.tool", notMatching(Tools.toolsToRegex())))
                 .withRequestBody(matchingJsonPath("$.prompt"))
                 .atPriority(8)
                 .willReturn(aResponse()
@@ -256,8 +256,8 @@ object MockServer {
             //POST generation with missing prompt parameter
             server.stubFor(post("/project/${project.id}/step")
                 .withName("POST generation with missing prompt parameter")
-                .withRequestBody(matchingJsonPath("$.provider", matching(Provider.providersToRegex())))
-                .withRequestBody(matchingJsonPath("$.tool", matching(Tool.toolsToRegex())))
+                .withRequestBody(matchingJsonPath("$.provider", matching(Providers.providersToRegex())))
+                .withRequestBody(matchingJsonPath("$.tool", matching(Tools.toolsToRegex())))
                 .withRequestBody(not(matchingJsonPath("$.prompt")))
                 .atPriority(8)
                 .willReturn(aResponse()
@@ -285,7 +285,7 @@ object MockServer {
                    """.trimIndent())
             )
         )
-        //server.stubFor(get(urlPathMatching("/project/.*/step")))
+        server.stubFor(get(urlPathMatching("/project/${projects}/step")))
     }
     fun stop(){
         server.stop()

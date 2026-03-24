@@ -1,17 +1,17 @@
 package utils.models
 
 import utils.data.GenerationData
-import utils.enums.Provider
-import utils.enums.Status
-import utils.enums.Tool
+import utils.enums.Providers
+import utils.enums.GenerationStatus
+import utils.enums.Tools
 import kotlin.concurrent.thread
 
 data class Generation (
     var id: String = generateJobId(),
-    var provider:String = Provider.entries.random().string,
-    var tool:String = Tool.entries.random().string,
+    var provider:String = Providers.entries.random().string,
+    var tool:String = Tools.entries.random().string,
     var prompt:String = GenerationData.validPromptList.random(),
-    var status:String = Status.N_A.string,
+    var status:String = GenerationStatus.N_A.string,
     var progress: Int? = null,
     var output:Map<String,Any?>? = null
 ) {

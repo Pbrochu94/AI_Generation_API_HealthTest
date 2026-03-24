@@ -7,7 +7,7 @@ import org.junit.jupiter.api.assertAll
 import utils.data.GenerationData
 import utils.models.BaseTest
 import utils.data.ProjectData.projectIdValid
-import utils.enums.Provider
+import utils.enums.Providers
 import utils.helpers.RequestBuilder.postStep
 import utils.models.Generation
 
@@ -21,7 +21,7 @@ class GenV2: BaseTest() {
     }
     @Test
     fun `GET with valid job id returns 200 with status and progress parameters`(){
-        val response: Response = postStep(projectIdValid.random(), Generation(provider = Provider.GENV2.string).getRequestBody())
+        val response: Response = postStep(projectIdValid.random(), Generation(provider = Providers.GENV2.string).getRequestBody())
             .then()
             .log().all()
             .extract()
