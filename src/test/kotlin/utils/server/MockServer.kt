@@ -6,9 +6,9 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import utils.models.Project
 import utils.enums.Providers
 import utils.enums.Tools
-import utils.models.User
-import utils.data.ProjectData
-import utils.data.UsersData
+import utils.data.ProjectData.projects
+import utils.data.UsersData.tokenValid
+import utils.data.UsersData.userValidCredentials
 
 
 object MockServer {
@@ -18,17 +18,6 @@ object MockServer {
             .port(8089)
             .globalTemplating(true)
     )
-    val users:List<User> = listOf(
-        User("Artorias", "Artorias@gmail.com", "abyssWalker01"),
-        User("Master chief", "masterchief@gmail.com", "Spartan117"),
-        User("Guts", "Guts@gmail.com", "Berserker01"),
-    )
-    var projects: MutableList<Project> = mutableListOf()
-    fun initDatabase() {
-        ProjectData.projects.forEach { project ->
-            projects.add(project)
-        }
-    }
     fun start(){
         if(!online){
             server.start()
@@ -38,11 +27,10 @@ object MockServer {
             server.stop()
             online = false
         }
-        initDatabase()
         wireMockConfig()
             .port(8089)
         //login VALID
-        users.forEach { user ->
+        userValidCredentials.forEach { user ->
             server.stubFor(post("/login")
                 .withName("login VALID")
                 .withRequestBody(matchingJsonPath("$.mail",  equalTo(user.mail)))
@@ -52,7 +40,7 @@ object MockServer {
                     .withHeader("Content-Type", "application/json")
                     .withBody("""
                    {
-                       "token":"${UsersData.tokenValid.random()}",
+                       "token":"${tokenValid.random()}",
                        "user":{
                             "accountId": "01",
                             "accountName": "${user.username}"
@@ -285,7 +273,7 @@ object MockServer {
                    """.trimIndent())
             )
         )
-        server.stubFor(get(urlPathMatching("/project/${projects}/step")))
+        //server.stubFor(get(urlPathMatching("/project/${projects}/step")))
     }
     fun stop(){
         server.stop()
