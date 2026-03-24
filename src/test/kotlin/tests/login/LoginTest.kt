@@ -11,17 +11,25 @@ import utils.data.UsersData.userInvalidMail
 import utils.data.UsersData.userInvalidPassword
 import utils.data.UsersData.userValidCredentials
 import utils.helpers.getResponseError
+import kotlin.test.assertContains
+import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 
 class CredentialVerifications: BaseTest(){
     @Test
-    fun `login with valid credentials returns 200`(){
+    fun `login with valid credentials returns 200 and authentification token`(){
         val response: Response = loginPost(userValidCredentials.random().credentialsToMap())
             .then()
             .log().all()
             .extract()
             .response()
-        assertEquals(200, response.statusCode()){getResponseError(response)}
+        assertAll(
+            {
+                assertEquals(200, response.statusCode())
+                assertNotNull(response.body.jsonPath().get("token"))
+            }
+        )
     }
     @Test
     fun `login with invalid password returns 401`(){

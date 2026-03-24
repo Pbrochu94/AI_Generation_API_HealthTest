@@ -3,11 +3,11 @@ package tests.generation.image2D
 import io.restassured.response.Response
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertAll
 import utils.data.GenerationData
 import utils.models.BaseTest
 import utils.data.ProjectData.projectIdValid
 import utils.enums.Provider
-import utils.enums.Tool
 import utils.helpers.RequestBuilder.postStep
 import utils.models.Generation
 
@@ -26,8 +26,12 @@ class GenV2: BaseTest() {
             .log().all()
             .extract()
             .response()
+        assertAll(
+            {
+                assertEquals(200, response.statusCode)
+            }
+        )
 
-        assertEquals(201, response.statusCode)
     }
 //    fun `POST returns in progress status`(){
 //        val body:Map<String,Any> = mapOf(

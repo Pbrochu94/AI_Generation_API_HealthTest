@@ -2,12 +2,13 @@ package utils.helpers
 
 import io.restassured.RestAssured
 import io.restassured.response.Response
+import utils.enums.Environments
 import utils.server.MockServer
 
 object RequestBuilder{
     fun loginPost(user:Map<String,String> ): Response{
         val response: Response = RestAssured.given()
-            .baseUri(MockServer.baseUrl)
+            .baseUri(Environments.BASE_URL.url)
             .header("Content-Type", "application/json")
             .header("Accept", "application/json")
             .body("""
@@ -22,7 +23,7 @@ object RequestBuilder{
     }
     fun projectCreationPost(body:Map<String,Any?>): Response {
         val response: Response = RestAssured.given()
-            .baseUri(MockServer.baseUrl)
+            .baseUri(Environments.BASE_URL.url)
             .header("Content-Type", "application/json")
             .header("Accept", "application/json")
             .body(body)
@@ -32,7 +33,7 @@ object RequestBuilder{
     }
     fun projectGet(id:String?): Response{
         val response: Response = RestAssured.given()
-            .baseUri(MockServer.baseUrl)
+            .baseUri(Environments.BASE_URL.url)
             .header("Content-Type", "application/json")
             .header("Accept", "application/json")
             .`when`()
@@ -41,12 +42,18 @@ object RequestBuilder{
     }
     fun postStep(projectId:String,body:Map<String,Any?>): Response{
         val response: Response = RestAssured.given()
-            .baseUri(MockServer.baseUrl)
+            .baseUri(Environments.BASE_URL.url)
             .header("Content-Type", "application/json")
             .header("Accept", "application/json")
             .body(body)
             .`when`()
             .post("/project/${projectId}/step")
         return response
+    }
+    fun getJob(jobId:String):Response{
+         return RestAssured.given()
+             .baseUri(Environments.BASE_URL.url)
+             .`when`()
+        .get("jobs/${jobId}")
     }
 }

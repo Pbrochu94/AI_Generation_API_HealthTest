@@ -92,6 +92,15 @@ object UsersData{
             "password" to "outdatedPassword",
         ),
     )
+    val tokenValid:List<String> = listOf(
+        "mock-token-123",
+        "mock-token-456",
+        "mock-token-789",
+        "mock-token-305",
+        "mock-token-345",
+        "mock-token-759",
+        "mock-token-903",
+    )
 }
 
 object GenerationData{
