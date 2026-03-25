@@ -5,8 +5,11 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
 import utils.data.GenerationData
+import utils.data.ProjectData
 import utils.data.ProjectData.projectIdInvalid
 import utils.data.ProjectData.projectIdValid
+import utils.enums.Providers
+import utils.helpers.RequestBuilder.getJob
 import utils.helpers.RequestBuilder.postStep
 import utils.helpers.getResponseError
 import utils.models.BaseTest
@@ -108,6 +111,21 @@ class StepEndpoint:BaseTest() {
             {
                 assertEquals(400, response.statusCode)
                 assertEquals("Missing required 'prompt' parameter in body", getResponseError(response))
+            }
+        )
+    }
+    @Test
+    fun `GET step with valid job id returns 200 with status and progress parameters`(){
+        val project = ProjectData.projects.random()
+        val response: Response = getJob(project.id, project.steps.random().id, Generation(provider = Providers.GENV2.string).getRequestBody())
+            .then()
+            .log().all()
+            .extract()
+            .response()
+        assertAll(
+            {
+                assertEquals(200, response.statusCode)
+                assertEquals(0, response.body.jsonPath().getInt("progress"))
             }
         )
     }

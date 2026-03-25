@@ -13,7 +13,7 @@ object ProjectData{
         Project("Dream", Privacy.RESTRICTED.string, listOf(GenerationData.jobList.random(), GenerationData.jobList.random(),
             GenerationData.jobList.random(), GenerationData.jobList.random())),
         Project("Seireitei", Privacy.PRIVATE.string, listOf(GenerationData.jobList.random())),
-        Project("Zeno", Privacy.PUBLIC.string),
+        Project("Zeno", Privacy.PUBLIC.string,listOf(GenerationData.jobList.random())),
         Project("Racoon City", Privacy.PUBLIC.string, listOf(GenerationData.jobList.random(), GenerationData.jobList.random())),
         Project("Grand Line", Privacy.RESTRICTED.string, listOf(GenerationData.jobList.random(), GenerationData.jobList.random(), GenerationData.jobList.random())),
         Project("Metroid", Privacy.PUBLIC.string, listOf(GenerationData.jobList.random())),

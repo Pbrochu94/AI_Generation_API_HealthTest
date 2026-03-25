@@ -3,7 +3,7 @@ package utils.models
 import utils.helpers.generateRandomId
 import utils.helpers.today
 
-data class Project(var name:String, var privacy:String, var steps:List<Generation>? = null) {
+data class Project(var name:String, var privacy:String, var steps:List<Generation>) {
     var id:String = generateRandomId()
     var createdAt: String = today()
     var updatedAt:String? = null
