@@ -122,18 +122,18 @@ object MockServer {
                     )
             )
         }
-        //GET projects with INVALID IDs
-        server.stubFor(
-            get(urlPathMatching("/project/.*"))
-                .withName("get projects with INVALID IDs")
-                .atPriority(10)
-                .willReturn(
-                    aResponse()
-                        .withStatus(404)
-                        .withHeader("Content-Type", "application/json")
-                        .withBody("""{"error": "No project matching the required ID"}""")
-                )
-        )
+//        //GET projects with INVALID IDs
+//        server.stubFor(
+//            get(urlPathMatching("/project/.*"))
+//                .withName("get projects with INVALID IDs")
+//                .atPriority(10)
+//                .willReturn(
+//                    aResponse()
+//                        .withStatus(404)
+//                        .withHeader("Content-Type", "application/json")
+//                        .withBody("""{"error": "No project matching the required ID"}""")
+//                )
+//        )
         //Stub linked to every projects endpoints
         projects.forEach { project ->
             //POST generation with correct project id and correct body parameters
@@ -258,6 +258,49 @@ object MockServer {
                     """.trimIndent())
                 )
             )
+            //Endpoints for each step generations
+            project.steps?.forEach { job ->
+                //GET job with valid id
+                server.stubFor(
+                    get(urlEqualTo("/project/${project.id}/step/${job.id}"))
+                        .withName("GET generation with correct id")
+                        .atPriority(8)
+                        .willReturn(
+                            aResponse()
+                                .withStatus(200)
+                                .withBody(
+                                    """
+                                        {
+                                            "id": "${job.id}",
+                                            "provider": "${job.provider}",
+                                            "tool": "${job.tool}",
+                                            "prompt": "${job.prompt}",
+                                            "status": "${job.status}",
+                                            "progress": ${job.progress},"
+                                            "output":"${job.output}"
+                                        }
+                                    """.trimIndent()
+                                )
+                        )
+                )
+                //GET job with invalid id
+                server.stubFor(
+                    get(urlEqualTo("/project/${project.id}/step/.*"))
+                        .withName("GET generation with correct id")
+                        .atPriority(10)
+                        .willReturn(
+                            aResponse()
+                                .withStatus(200)
+                                .withBody(
+                                    """
+                                        {
+                                            "error": "Invalid job ID requested"
+                                        }
+                                    """.trimIndent()
+                                )
+                        )
+                )
+            }
         }
         //POST generation with incorrect project id
         server.stubFor(post(urlPathMatching("/project/.*/step"))
@@ -273,7 +316,6 @@ object MockServer {
                    """.trimIndent())
             )
         )
-        //server.stubFor(get(urlPathMatching("/project/${projects}/step")))
     }
     fun stop(){
         server.stop()

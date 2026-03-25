@@ -50,10 +50,13 @@ object RequestBuilder{
             .post("/project/${projectId}/step")
         return response
     }
-    fun getJob(jobId:String):Response{
+    fun getJob(projectId: String,jobId:String?, requestBody:Map<String,Any?>):Response{
          return RestAssured.given()
-             .baseUri(Environments.BASE_URL.url)
+             .baseUri(Environments.PROJECT_URL.url)
+             .header("Content-Type", "application/json")
+             .header("Accept", "application/json")
+             .body(requestBody)
              .`when`()
-        .get("jobs/${jobId}")
+        .get("/${projectId}/step/${jobId}")
     }
 }
