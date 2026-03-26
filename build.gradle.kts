@@ -18,6 +18,7 @@ dependencies {
     testImplementation("org.wiremock:wiremock:3.5.4")
     testImplementation("org.slf4j:slf4j-nop:2.0.13")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    testImplementation("org.awaitility:awaitility-kotlin:4.2.0")
 }
 
 tasks.test {

@@ -6,17 +6,16 @@ import kotlin.collections.forEach
 
 object ProjectData{
     val projects:List<Project> = listOf(
-        Project("Abyss", Privacy.PRIVATE.string, listOf(GenerationData.jobList.random())),
-        Project("Reach", Privacy.PUBLIC.string, listOf(GenerationData.jobList.random(), GenerationData.jobList.random())),
-        Project("Eclipse", Privacy.PUBLIC.string, listOf(GenerationData.jobList.random())),
-        Project("Dragon", Privacy.PUBLIC.string, listOf(GenerationData.jobList.random(), GenerationData.jobList.random())),
-        Project("Dream", Privacy.RESTRICTED.string, listOf(GenerationData.jobList.random(), GenerationData.jobList.random(),
-            GenerationData.jobList.random(), GenerationData.jobList.random())),
-        Project("Seireitei", Privacy.PRIVATE.string, listOf(GenerationData.jobList.random())),
-        Project("Zeno", Privacy.PUBLIC.string,listOf(GenerationData.jobList.random())),
-        Project("Racoon City", Privacy.PUBLIC.string, listOf(GenerationData.jobList.random(), GenerationData.jobList.random())),
-        Project("Grand Line", Privacy.RESTRICTED.string, listOf(GenerationData.jobList.random(), GenerationData.jobList.random(), GenerationData.jobList.random())),
-        Project("Metroid", Privacy.PUBLIC.string, listOf(GenerationData.jobList.random())),
+        Project("Abyss", Privacy.PRIVATE.string, GenerationData.jobList),
+        Project("Reach", Privacy.PUBLIC.string, GenerationData.jobList),
+        Project("Eclipse", Privacy.PUBLIC.string, GenerationData.jobList),
+        Project("Dragon", Privacy.PUBLIC.string, GenerationData.jobList),
+        Project("Dream", Privacy.RESTRICTED.string, GenerationData.jobList),
+        Project("Seireitei", Privacy.PRIVATE.string, GenerationData.jobList),
+        Project("Zeno", Privacy.PUBLIC.string,GenerationData.jobList),
+        Project("Racoon City", Privacy.PUBLIC.string, GenerationData.jobList),
+        Project("Grand Line", Privacy.RESTRICTED.string, GenerationData.jobList),
+        Project("Metroid", Privacy.PUBLIC.string, GenerationData.jobList),
     )
     val projectIdValid:List<String> = populateValidIdList()
     val projectIdInvalid:List<String> = listOf(
@@ -29,7 +28,7 @@ object ProjectData{
         "0000-0000-0000"
     )
     fun populateValidIdList():List<String> {
-        var idList:MutableList<String> = mutableListOf()
+        val idList:MutableList<String> = mutableListOf()
         projects.forEach { project ->
             idList.add(project.id)
         }

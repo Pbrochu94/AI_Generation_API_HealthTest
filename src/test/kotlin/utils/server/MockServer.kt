@@ -259,7 +259,7 @@ object MockServer {
                                         "status": "{{jsonPath request.body '$.status'}}",
                                         "progress": "{{jsonPath request.body '$.progress'}}",
                                         "imageUrl": "{{jsonPath request.body '$.imageUrl'}}",
-                                        "format": "{{jsonPath request.body '$.output.format'}}",
+                                        "format": "{{jsonPath request.body '$.format'}}",
                                     },
                 """.trimIndent())
                         )

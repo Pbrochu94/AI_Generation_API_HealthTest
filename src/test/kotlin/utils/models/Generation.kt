@@ -2,19 +2,18 @@ package utils.models
 
 import kotlinx.coroutines.delay
 import utils.data.GenerationData
-import utils.data.GenerationData.Status
+import utils.enums.GenerationStatus
 import utils.data.GenerationData.image2DUrl
 import utils.enums.Image2DFormat
 import utils.enums.Providers
 import utils.enums.Tools
-import kotlin.concurrent.thread
 
 data class Generation (
     var id: String = generateJobId(),
     var provider:String = Providers.entries.random().string,
     var tool:String = Tools.entries.random().string,
-    var prompt:String = GenerationData.validPromptList.random(),
-    var status:String = Status.N_A.string,
+    var prompt:String = GenerationData.subjectPromptList.random(),
+    var status:String = GenerationStatus.N_A.string,
     var progress:Int =0,
     var imageUrl:String? = null,
     var format:String? = null
@@ -31,27 +30,27 @@ data class Generation (
             "format" to format
         )
     }
-    suspend fun generate(result:String){
+    suspend fun generate(result:String = "success"){
         when(result.lowercase()){
             "success" -> {
                 do {
-                    println(progress)
-                    delay(3000)
-                    status = Status.IN_PROGRESS.string
+                    delay(5000)
+                    status = GenerationStatus.IN_PROGRESS.string
                     progress += 25
                 }while(progress != 100)
-                status = Status.SUCCESS.string
+                status = GenerationStatus.SUCCESS.string
                 imageUrl = image2DUrl.random()
                 format = Image2DFormat.entries.random().string
             }
             "failed" -> {
                 do {
-                    println(progress)
-                    delay(3000)
-                    status = Status.IN_PROGRESS.string
+                    delay(5000)
+                    status = GenerationStatus.IN_PROGRESS.string
                     progress += 25
                 }while(progress != 75)
-                status = Status.FAILURE.string
+                status = GenerationStatus.FAILURE.string
+                imageUrl = null
+                format = null
             }
         }
 

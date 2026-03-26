@@ -1,67 +1,68 @@
 package tests.generation.image2D
 
-import com.github.tomakehurst.wiremock.http.Response.response
+import io.restassured.internal.http.Status
 import io.restassured.response.Response
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
 import utils.data.GenerationData
-import utils.data.GenerationData.Status
 import utils.data.ProjectData
+import utils.enums.GenerationStatus
 import utils.models.BaseTest
-import utils.data.ProjectData.projectIdValid
 import utils.enums.Providers
+import utils.enums.Timer
 import utils.helpers.RequestBuilder.getJob
-import utils.helpers.RequestBuilder.postStep
+import utils.helpers.pollGet
 import utils.models.Generation
-import kotlin.concurrent.thread
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 
 class GenV2: BaseTest() {
     @Test
-    fun `test`(){
+    fun `Successful generation returns 200 and generation result`(){
         val project = ProjectData.projects.random()
-        val generation = project.steps.random()
-        var response:Response? = null
-        println(generation)
+        val generation = project.steps.first{it.provider == Providers.GENV2.string}
         CoroutineScope(Dispatchers.Default).launch {
-            generation.generate("success")
+            generation.generate()
         }
-        do {
-            response  = getJob(project.id,generation.id, generation.getRequestBody())
-                .then()
-                .log().all()
-                .extract()
-                .response()
-            println(response.asString())
-            val status = response.body.jsonPath().getString("status")
-        }while ( status == Status.IN_PROGRESS.string ||status == Status.N_A.string)
+        pollGet(project.id ,generation, Timer.TIMEOUT2D)
         val completedResponse:Response = getJob(project.id,generation.id, generation.getRequestBody())
             .then()
-            .log().all()
             .extract()
             .response()
-        println(generation)
-        println(completedResponse.asString())
+        val outputFormat = completedResponse.body.jsonPath().getString("format")
+        assertAll(
+            {
+                assertEquals(200, completedResponse.statusCode())
+                assertEquals(GenerationStatus.SUCCESS.string, completedResponse.body.jsonPath().getString("status"))
+                assertNotNull(completedResponse.body.jsonPath().getString("imageUrl"))
+                assertTrue(GenerationData.Image2DFormat.entries.map{it.string}.contains(outputFormat))
+            }
+        )
     }
     @Test
-    fun `Generation succeed and returns output`(){
+    fun `Failed generation returns 200 and 'failed' status`(){
         val project = ProjectData.projects.random()
-        val response: Response = getJob(project.id, project.steps.random().id, Generation(provider = Providers.GENV2.string).getRequestBody())
+        val generation = project.steps.first{it.provider == Providers.GENV2.string}
+        CoroutineScope(Dispatchers.Default).launch {
+            generation.generate("failed")
+        }
+        pollGet(project.id ,generation, Timer.TIMEOUT2D)
+        val completedResponse:Response = getJob(project.id,generation.id, generation.getRequestBody())
             .then()
-            .log().all()
             .extract()
             .response()
         assertAll(
             {
-                assertEquals(200, response.statusCode)
-                assertEquals(0, response.body.jsonPath().getInt("progress"))
+                assertEquals(200, completedResponse.statusCode())
+                assertEquals(GenerationStatus.FAILURE.string, completedResponse.body.jsonPath().getString("status"))
+                assertTrue(completedResponse.body.jsonPath().getString("imageUrl").isNullOrEmpty())
+                assertTrue(completedResponse.body.jsonPath().getString("format").isNullOrEmpty())
             }
         )
     }
