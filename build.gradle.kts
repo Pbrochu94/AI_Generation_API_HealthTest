@@ -19,6 +19,7 @@ dependencies {
     testImplementation("org.slf4j:slf4j-nop:2.0.13")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     testImplementation("org.awaitility:awaitility-kotlin:4.2.0")
+    testImplementation("io.qameta.allure:allure-junit5:2.24.0")
 }
 
 tasks.test {

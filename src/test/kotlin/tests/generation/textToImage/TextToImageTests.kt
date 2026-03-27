@@ -1,17 +1,17 @@
 package tests.generation.textToImage
 
+import io.qameta.allure.LabelAnnotation
 import io.restassured.response.Response
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.EnumSource
 import utils.data.GenerationData
 import utils.data.ProjectData
-import utils.data.GenerationData.Status
 import utils.models.BaseTest
 import utils.data.GenerationData.Providers
-import utils.data.GenerationData.Tools
 import utils.enums.Timer
 import utils.helpers.RequestBuilder.getJob
 import utils.helpers.pollGet
@@ -19,18 +19,23 @@ import utils.models.Generation
 import utils.models.Project
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
+import utils.data.GenerationData.Status
+import utils.data.GenerationData.Tools
+import io.qameta.allure.Story
 
 
-class MakoTextToImageTests: BaseTest() {
+class TextToImage: BaseTest() {
     private lateinit var project: Project
     private lateinit var generation: Generation
     @BeforeEach
     fun initTestParameters(){
         project = ProjectData.projects.random()
-        generation = project.steps.first{it.provider == Providers.MAKO.string && it.tool == Tools.PROMPT_TO_IMAGE.string}
     }
-    @Test
-    fun `Successful generation returns 200 and generation result`(){
+    @Story("Success case")
+    @EnumSource(Providers::class)
+    @ParameterizedTest(name = "Text to Image generation with {0} provider")
+    fun `Successful generation returns 200 and generation result`(provider:Providers) {
+        generation = project.steps.first{it.provider == provider.string && it.tool == Tools.PROMPT_TO_IMAGE.string}
         generation.launchAsyncGenerationSuccess()
         pollGet(project.id ,generation, Timer.TIMEOUT2D)
         val completedResponse:Response = getJob(project.id,generation.id, generation.getRequestBody())
@@ -47,8 +52,11 @@ class MakoTextToImageTests: BaseTest() {
             }
         )
     }
-    @Test
-    fun `Failed generation returns 200 and 'failed' status`(){
+    @Story("Failure case")
+    @EnumSource(Providers::class)
+    @ParameterizedTest(name = "Text to Image generation with {0} provider")
+    fun `Failed generation returns 200 and 'failed' status`(provider:Providers) {
+        generation = project.steps.first{it.provider == provider.string && it.tool == Tools.PROMPT_TO_IMAGE.string}
         generation.launchAsyncGenerationFailed()
         pollGet(project.id ,generation, Timer.TIMEOUT2D)
         val completedResponse:Response = getJob(project.id,generation.id, generation.getRequestBody())

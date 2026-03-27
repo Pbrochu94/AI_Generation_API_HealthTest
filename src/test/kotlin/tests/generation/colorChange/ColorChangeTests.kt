@@ -1,11 +1,14 @@
 package tests.generation.colorChange
 
+import io.qameta.allure.Story
 import io.restassured.response.Response
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.EnumSource
 import utils.data.GenerationData
 import utils.data.ProjectData
 import utils.models.BaseTest
@@ -27,11 +30,14 @@ class GenV2ColorChangeTests: BaseTest() {
     @BeforeEach
     fun initTestParameters(){
         project = ProjectData.projects.random()
-        generation = project.steps.first{it.provider == Providers.GENV2.string && it.tool == Tools.COLOR_CHANGE.string}
     }
-    @Test
-    fun `Successful generation returns 200 and generation result`(){
+    @Story("Success case")
+    @EnumSource(Providers::class)
+    @ParameterizedTest(name = "Text to Image generation with {0} provider")
+    fun `Successful generation returns 200 and generation result`(provider: Providers) {
+        generation = project.steps.first{it.provider == provider.string && it.tool == Tools.COLOR_CHANGE.string}
         generation.launchAsyncGenerationSuccess()
+        println(generation)
         pollGet(project.id ,generation, Timer.TIMEOUT2D)
         val completedResponse:Response = getJob(project.id,generation.id, generation.getRequestBody())
             .then()
@@ -47,8 +53,10 @@ class GenV2ColorChangeTests: BaseTest() {
             }
         )
     }
-    @Test
-    fun `Failed generation returns 200 and 'failed' status`(){
+    @Story("Failure case")
+    @EnumSource(Providers::class)
+    @ParameterizedTest(name = "Text to Image generation with {0} provider")
+    fun `Failed generation returns 200 and 'failed' status`(provider:Providers){
         generation.launchAsyncGenerationFailed()
         pollGet(project.id ,generation, Timer.TIMEOUT2D)
         val completedResponse:Response = getJob(project.id,generation.id, generation.getRequestBody())
