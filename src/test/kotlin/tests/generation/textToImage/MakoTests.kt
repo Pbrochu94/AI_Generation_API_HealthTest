@@ -1,7 +1,6 @@
-package tests.generation.image2D
+package tests.generation.textToImage
 
 import io.restassured.response.Response
-import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -21,13 +20,13 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 
-class GenV2: BaseTest() {
+class MakoTextToImageTests: BaseTest() {
     private lateinit var project: Project
     private lateinit var generation: Generation
     @BeforeEach
     fun initTestParameters(){
         project = ProjectData.projects.random()
-        generation = project.steps.first{it.provider == Providers.GENV2.string}
+        generation = project.steps.first{it.provider == Providers.MAKO.string}
     }
     @Test
     fun `Successful generation returns 200 and generation result`(){

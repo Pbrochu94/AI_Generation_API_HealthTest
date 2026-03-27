@@ -1,7 +1,6 @@
 package utils.data
 
 import utils.enums.GenerationStatus
-import utils.enums.Image2DFormat
 import utils.enums.Providers
 import utils.enums.Tools
 import utils.models.Generation

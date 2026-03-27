@@ -33,7 +33,6 @@ data class Generation (
             "format" to format
         )
     }
-
     fun launchAsyncGenerationSuccess(){
         CoroutineScope(Dispatchers.Default).launch {
             do {
