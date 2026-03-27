@@ -1,6 +1,9 @@
 package utils.models
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import utils.data.GenerationData
 import utils.enums.GenerationStatus
 import utils.data.GenerationData.image2DUrl
@@ -30,30 +33,36 @@ data class Generation (
             "format" to format
         )
     }
-    suspend fun generate(result:String = "success"){
-        when(result.lowercase()){
-            "success" -> {
-                do {
-                    delay(5000)
-                    status = GenerationStatus.IN_PROGRESS.string
-                    progress += 25
-                }while(progress != 100)
-                status = GenerationStatus.SUCCESS.string
-                imageUrl = image2DUrl.random()
-                format = Image2DFormat.entries.random().string
-            }
-            "failed" -> {
-                do {
-                    delay(5000)
-                    status = GenerationStatus.IN_PROGRESS.string
-                    progress += 25
-                }while(progress != 75)
-                status = GenerationStatus.FAILURE.string
-                imageUrl = null
-                format = null
-            }
-        }
 
+    fun launchAsyncGenerationSuccess(){
+        CoroutineScope(Dispatchers.Default).launch {
+            do {
+                delay(5000)
+                status = GenerationStatus.IN_PROGRESS.string
+                progress += 25
+            }while(progress != 100)
+            status = GenerationStatus.SUCCESS.string
+            imageUrl = image2DUrl.random()
+            format = Image2DFormat.entries.random().string
+        }
+    }
+    fun launchAsyncGenerationFailed(){
+        CoroutineScope(Dispatchers.Default).launch {
+            do {
+                delay(5000)
+                status = GenerationStatus.IN_PROGRESS.string
+                progress += 25
+            }while(progress != 75)
+            status = GenerationStatus.FAILURE.string
+            imageUrl = null
+            format = null
+        }
+    }
+    fun clear(){
+        status= GenerationStatus.N_A.string
+        progress=0
+        imageUrl= null
+        format = null
     }
     companion object{
         fun generateJobId():String{

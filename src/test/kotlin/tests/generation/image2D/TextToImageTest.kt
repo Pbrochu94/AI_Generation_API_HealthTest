@@ -1,11 +1,10 @@
 package tests.generation.image2D
 
-import io.restassured.internal.http.Status
 import io.restassured.response.Response
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
 import utils.data.GenerationData
@@ -17,19 +16,22 @@ import utils.enums.Timer
 import utils.helpers.RequestBuilder.getJob
 import utils.helpers.pollGet
 import utils.models.Generation
+import utils.models.Project
 import kotlin.test.assertNotNull
-import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 
 class GenV2: BaseTest() {
+    private lateinit var project: Project
+    private lateinit var generation: Generation
+    @BeforeEach
+    fun initTestParameters(){
+        project = ProjectData.projects.random()
+        generation = project.steps.first{it.provider == Providers.GENV2.string}
+    }
     @Test
     fun `Successful generation returns 200 and generation result`(){
-        val project = ProjectData.projects.random()
-        val generation = project.steps.first{it.provider == Providers.GENV2.string}
-        CoroutineScope(Dispatchers.Default).launch {
-            generation.generate()
-        }
+        generation.launchAsyncGenerationSuccess()
         pollGet(project.id ,generation, Timer.TIMEOUT2D)
         val completedResponse:Response = getJob(project.id,generation.id, generation.getRequestBody())
             .then()
@@ -47,11 +49,7 @@ class GenV2: BaseTest() {
     }
     @Test
     fun `Failed generation returns 200 and 'failed' status`(){
-        val project = ProjectData.projects.random()
-        val generation = project.steps.first{it.provider == Providers.GENV2.string}
-        CoroutineScope(Dispatchers.Default).launch {
-            generation.generate("failed")
-        }
+        generation.launchAsyncGenerationFailed()
         pollGet(project.id ,generation, Timer.TIMEOUT2D)
         val completedResponse:Response = getJob(project.id,generation.id, generation.getRequestBody())
             .then()
@@ -65,5 +63,9 @@ class GenV2: BaseTest() {
                 assertTrue(completedResponse.body.jsonPath().getString("format").isNullOrEmpty())
             }
         )
+    }
+    @AfterEach
+    fun destroyTestParameters(){
+        generation.clear()
     }
 }
