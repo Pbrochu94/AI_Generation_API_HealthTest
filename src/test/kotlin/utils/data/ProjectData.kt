@@ -1,6 +1,6 @@
 package utils.data
 
-import utils.enums.Privacy
+
 import utils.models.Project
 import kotlin.collections.forEach
 
@@ -33,5 +33,10 @@ object ProjectData{
             idList.add(project.id)
         }
         return idList
+    }
+    enum class Privacy(val string:String){
+        PUBLIC("public"),
+        PRIVATE("private"),
+        RESTRICTED("restricted")
     }
 }

@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
-import utils.models.Project
-import utils.enums.Providers
-import utils.enums.Tools
+import utils.data.GenerationData
+import utils.data.GenerationData.Providers
+import utils.data.GenerationData.Tools
 import utils.data.ProjectData.projects
 import utils.data.UsersData.tokenValid
 import utils.data.UsersData.userValidCredentials
@@ -242,9 +242,10 @@ object MockServer {
             )
             //Endpoints for each step generations
             project.steps.forEach { job ->
-                //GET job with valid id
+                //GET Text to image job with valid id
                 server.stubFor(
                     get(urlEqualTo("/project/${project.id}/step/${job.id}"))
+                        .withRequestBody(matchingJsonPath("$.tool", matching((Tools.PROMPT_TO_IMAGE.string))))
                         .withName("GET generation with correct id")
                         .atPriority(8)
                         .willReturn(

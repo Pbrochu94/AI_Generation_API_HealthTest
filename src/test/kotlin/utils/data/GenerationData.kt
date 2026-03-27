@@ -1,8 +1,7 @@
 package utils.data
 
-import utils.enums.GenerationStatus
-import utils.enums.Providers
-import utils.enums.Tools
+
+
 import utils.models.Generation
 
 object GenerationData{
@@ -39,7 +38,7 @@ object GenerationData{
             provider = Providers.GENV2.string,
             tool = Tools.PROMPT_TO_IMAGE.string,
             prompt = subjectPromptList.random(),
-            status = GenerationStatus.N_A.string,
+            status = Status.N_A.string,
             progress = 0,
             imageUrl = null,
             format = null
@@ -49,7 +48,7 @@ object GenerationData{
             provider = Providers.GENV2.string,
             tool = Tools.PROMPT_TO_IMAGE.string,
             prompt = subjectPromptList.random(),
-            status = GenerationStatus.N_A.string,
+            status = Status.N_A.string,
             progress = 0,
             imageUrl = null,
             format = null
@@ -59,7 +58,7 @@ object GenerationData{
             provider = Providers.MAKO.string,
             tool = Tools.PROMPT_TO_IMAGE.string,
             prompt = subjectPromptList.random(),
-            status = GenerationStatus.N_A.string,
+            status = Status.N_A.string,
             progress = 0,
             imageUrl = null,
             format = null
@@ -69,7 +68,7 @@ object GenerationData{
             provider = Providers.NOTUAI.string,
             tool = Tools.PROMPT_TO_IMAGE.string,
             prompt = subjectPromptList.random(),
-            status = GenerationStatus.N_A.string,
+            status = Status.N_A.string,
             progress = 0,
             imageUrl = null,
             format = null
@@ -79,7 +78,7 @@ object GenerationData{
             provider = Providers.GENV2.string,
             tool = Tools.COLOR_CHANGE.string,
             prompt = colorPromptList.random(),
-            status = GenerationStatus.N_A.string,
+            status = Status.N_A.string,
             progress = 0,
             imageUrl = null,
             format = null
@@ -89,7 +88,7 @@ object GenerationData{
             provider = Providers.MAKO.string,
             tool = Tools.COLOR_CHANGE.string,
             prompt = colorPromptList.random(),
-            status = GenerationStatus.N_A.string,
+            status = Status.N_A.string,
             progress = 0,
             imageUrl = null,
             format = null
@@ -99,7 +98,7 @@ object GenerationData{
             provider = Providers.NOTUAI.string,
             tool = Tools.COLOR_CHANGE.string,
             prompt = colorPromptList.random(),
-            status = GenerationStatus.N_A.string,
+            status = Status.N_A.string,
             progress = 0,
             imageUrl = null,
             format = null
@@ -109,7 +108,7 @@ object GenerationData{
             provider = Providers.GENV2.string,
             tool = Tools.STYLE_RENDER.string,
             prompt = subjectPromptList.random(),
-            status = GenerationStatus.N_A.string,
+            status = Status.N_A.string,
             progress = 0,
             imageUrl = null,
             format = null
@@ -119,7 +118,7 @@ object GenerationData{
             provider = Providers.NOTUAI.string,
             tool = Tools.STYLE_RENDER.string,
             prompt = subjectPromptList.random(),
-            status = GenerationStatus.N_A.string,
+            status = Status.N_A.string,
             progress = 0,
             imageUrl = null,
             format = null
@@ -129,7 +128,7 @@ object GenerationData{
             provider = Providers.MAKO.string,
             tool = Tools.STYLE_RENDER.string,
             prompt = subjectPromptList.random(),
-            status = GenerationStatus.N_A.string,
+            status = Status.N_A.string,
             progress = 0,
             imageUrl = null,
             format = null
@@ -139,7 +138,7 @@ object GenerationData{
             provider = Providers.GENV2.string,
             tool = Tools.ERASE.string,
             prompt = eraseSubjectList.random(),
-            status = GenerationStatus.N_A.string,
+            status = Status.N_A.string,
             progress = 0,
             imageUrl = null,
             format = null
@@ -149,7 +148,7 @@ object GenerationData{
             provider = Providers.MAKO.string,
             tool = Tools.ERASE.string,
             prompt = eraseSubjectList.random(),
-            status = GenerationStatus.N_A.string,
+            status = Status.N_A.string,
             progress = 0,
             imageUrl = null,
             format = null
@@ -159,7 +158,7 @@ object GenerationData{
             provider = Providers.NOTUAI.string,
             tool = Tools.ERASE.string,
             prompt = eraseSubjectList.random(),
-            status = GenerationStatus.N_A.string,
+            status = Status.N_A.string,
             progress = 0,
             imageUrl = null,
             format = null
@@ -176,4 +175,32 @@ object GenerationData{
         PNG("png"),
         JPEG("jpg"),
     }
+    enum class Providers(val string:String){
+        GENV2("genv2"),
+        NOTUAI("notuai"),
+        MAKO("mako");
+        companion object{
+            fun providersToRegex():String{
+                return entries.joinToString("|") { it.string }
+            }
+        }
+    }
+    enum class Tools(val string: String) {
+        PROMPT_TO_IMAGE("text_to_image"),
+        STYLE_RENDER("image_modification_style"),
+        COLOR_CHANGE("image_modification_color"),
+        ERASE("image_modification_erase");
+        companion object{
+            fun toolsToRegex():String{
+                return Tools.entries.joinToString("|") { it.string }
+            }
+        }
+    }
+    enum class Status(val string:String) {
+        N_A("n/a"),
+        IN_PROGRESS("in progress"),
+        SUCCESS("succeeded"),
+        FAILURE("failed"),
+    }
+
 }

@@ -8,9 +8,10 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
 import utils.data.GenerationData
 import utils.data.ProjectData
-import utils.enums.GenerationStatus
+import utils.data.GenerationData.Status
 import utils.models.BaseTest
-import utils.enums.Providers
+import utils.data.GenerationData.Providers
+import utils.data.GenerationData.Tools
 import utils.enums.Timer
 import utils.helpers.RequestBuilder.getJob
 import utils.helpers.pollGet
@@ -26,7 +27,7 @@ class NotuAiTextToImageTests: BaseTest() {
     @BeforeEach
     fun initTestParameters(){
         project = ProjectData.projects.random()
-        generation = project.steps.first{it.provider == Providers.NOTUAI.string}
+        generation = project.steps.first{it.provider == Providers.NOTUAI.string && it.tool == Tools.PROMPT_TO_IMAGE.string}
     }
     @Test
     fun `Successful generation returns 200 and generation result`(){
@@ -40,7 +41,7 @@ class NotuAiTextToImageTests: BaseTest() {
         assertAll(
             {
                 assertEquals(200, completedResponse.statusCode())
-                assertEquals(GenerationStatus.SUCCESS.string, completedResponse.body.jsonPath().getString("status"))
+                assertEquals(Status.SUCCESS.string, completedResponse.body.jsonPath().getString("status"))
                 assertNotNull(completedResponse.body.jsonPath().getString("imageUrl"))
                 assertTrue(GenerationData.Image2DFormat.entries.map{it.string}.contains(outputFormat))
             }
@@ -57,7 +58,7 @@ class NotuAiTextToImageTests: BaseTest() {
         assertAll(
             {
                 assertEquals(200, completedResponse.statusCode())
-                assertEquals(GenerationStatus.FAILURE.string, completedResponse.body.jsonPath().getString("status"))
+                assertEquals(Status.FAILURE.string, completedResponse.body.jsonPath().getString("status"))
                 assertTrue(completedResponse.body.jsonPath().getString("imageUrl").isNullOrEmpty())
                 assertTrue(completedResponse.body.jsonPath().getString("format").isNullOrEmpty())
             }

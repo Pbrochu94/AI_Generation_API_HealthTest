@@ -5,18 +5,19 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import utils.data.GenerationData
-import utils.enums.GenerationStatus
+import utils.data.GenerationData.Status
 import utils.data.GenerationData.image2DUrl
-import utils.enums.Image2DFormat
-import utils.enums.Providers
-import utils.enums.Tools
+import utils.data.GenerationData.Image2DFormat
+import utils.data.GenerationData.Providers
+import utils.data.GenerationData.Tools
 
 data class Generation (
     var id: String = generateJobId(),
     var provider:String = Providers.entries.random().string,
     var tool:String = Tools.entries.random().string,
-    var prompt:String = GenerationData.subjectPromptList.random(),
-    var status:String = GenerationStatus.N_A.string,
+    var prompt:String? = GenerationData.subjectPromptList.random(),
+    var inputImage:String? = null,
+    var status:String = Status.N_A.string,
     var progress:Int =0,
     var imageUrl:String? = null,
     var format:String? = null
@@ -26,6 +27,7 @@ data class Generation (
             "id" to id,
             "tool" to tool,
             "provider" to provider,
+            "inputImage" to inputImage,
             "prompt" to prompt,
             "status" to status,
             "progress" to progress,
@@ -37,10 +39,10 @@ data class Generation (
         CoroutineScope(Dispatchers.Default).launch {
             do {
                 delay(5000)
-                status = GenerationStatus.IN_PROGRESS.string
+                status = Status.IN_PROGRESS.string
                 progress += 25
             }while(progress != 100)
-            status = GenerationStatus.SUCCESS.string
+            status = Status.SUCCESS.string
             imageUrl = image2DUrl.random()
             format = Image2DFormat.entries.random().string
         }
@@ -49,16 +51,16 @@ data class Generation (
         CoroutineScope(Dispatchers.Default).launch {
             do {
                 delay(5000)
-                status = GenerationStatus.IN_PROGRESS.string
+                status = Status.IN_PROGRESS.string
                 progress += 25
             }while(progress != 75)
-            status = GenerationStatus.FAILURE.string
+            status = Status.FAILURE.string
             imageUrl = null
             format = null
         }
     }
     fun clear(){
-        status= GenerationStatus.N_A.string
+        status= Status.N_A.string
         progress=0
         imageUrl= null
         format = null

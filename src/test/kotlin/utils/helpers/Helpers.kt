@@ -1,11 +1,8 @@
 package utils.helpers
 
 import io.restassured.response.Response
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.awaitility.Awaitility.await
-import utils.enums.GenerationStatus
+import utils.data.GenerationData.Status
 import utils.enums.Timer
 import utils.helpers.RequestBuilder.getJob
 import utils.models.Generation
@@ -36,7 +33,7 @@ fun pollGet(projectId:String, generation: Generation, timeout: Timer){
                 .extract()
                 .response()
             val status = response.body.jsonPath().getString("status")
-            status != GenerationStatus.IN_PROGRESS.string && status != GenerationStatus.N_A.string
+            status != Status.IN_PROGRESS.string && status != Status.N_A.string
         }
 }
 

@@ -1,4 +1,4 @@
-package tests.generation.textToImage
+package tests.generation.colorChange
 
 import io.restassured.response.Response
 import org.junit.jupiter.api.AfterEach
@@ -8,10 +8,8 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
 import utils.data.GenerationData
 import utils.data.ProjectData
-import utils.data.GenerationData.Status
 import utils.models.BaseTest
 import utils.data.GenerationData.Providers
-import utils.data.GenerationData.Tools
 import utils.enums.Timer
 import utils.helpers.RequestBuilder.getJob
 import utils.helpers.pollGet
@@ -19,15 +17,17 @@ import utils.models.Generation
 import utils.models.Project
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
+import utils.data.GenerationData.Status
+import utils.data.GenerationData.Tools
 
 
-class MakoTextToImageTests: BaseTest() {
+class GenV2ColorChangeTests: BaseTest() {
     private lateinit var project: Project
     private lateinit var generation: Generation
     @BeforeEach
     fun initTestParameters(){
         project = ProjectData.projects.random()
-        generation = project.steps.first{it.provider == Providers.MAKO.string && it.tool == Tools.PROMPT_TO_IMAGE.string}
+        generation = project.steps.first{it.provider == Providers.GENV2.string && it.tool == Tools.COLOR_CHANGE.string}
     }
     @Test
     fun `Successful generation returns 200 and generation result`(){

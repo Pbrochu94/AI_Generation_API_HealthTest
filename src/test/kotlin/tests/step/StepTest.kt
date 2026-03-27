@@ -8,7 +8,7 @@ import utils.data.GenerationData
 import utils.data.ProjectData
 import utils.data.ProjectData.projectIdInvalid
 import utils.data.ProjectData.projectIdValid
-import utils.enums.Providers
+import utils.data.GenerationData.Providers
 import utils.helpers.RequestBuilder.getJob
 import utils.helpers.RequestBuilder.postStep
 import utils.helpers.getResponseError
